@@ -46,7 +46,6 @@ router.get('/:id', function(req, res) {
                   'Project where id = ?', req.params.id, cb);
 });
 
-
 router.post('/', function(req, res) {
    var vld = req.validator;
    var body = req.body;

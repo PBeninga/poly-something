@@ -39,7 +39,6 @@ router.get('/:prjId', function(req, res) {
    });
 });
 
-// So will this
 router.post('/:prjId', function(req, res){
    var vld = req.validator;
    var cnn = req.cnn;
@@ -58,14 +57,17 @@ router.post('/:prjId', function(req, res){
           {prjId: prjId, prsId: req.session.id,
           whenMade: now = new Date().getTime(), content: req.body.content},
            cb);
+   },
+   function(insRes, fields, cb) {
+      //res.location(router.baseURL + '/' +prjId+'/'+ insRes.insertId).end();
+      // TODO: Add a response location if necessary.
+      cb();
+      // No need for setting last message
+      // cnn.chkQry("update Project set lastMessage = ? where id = ?",
+      //  [now, prjId], cb);
    }],
-   // No need for setting last message
-   // function(insRes, fields, cb) {
-   //    res.location(router.baseURL + '/' +prjId+'/'+ insRes.insertId).end();
-   //    cnn.chkQry("update Project set lastMessage = ? where id = ?",
-   //     [now, prjId], cb);
-   // }],
    function(err) {
+      res.status(200).end();
       cnn.release();
    });
 });
