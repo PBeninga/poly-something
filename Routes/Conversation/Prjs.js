@@ -4,22 +4,37 @@ var router = Express.Router({caseSensitive: true});
 var async = require('async');
 
 var kMaxTitleLen = 80;
-router.baseURL = '/Cnvs';
+router.baseURL = '/Prjs';
 //?owner=id
-router.get('/', function(req, res) {
+router.get('/', function(req, res) { /* do we want to add optional owner param? */
    cb = function(err, cnvs) {
       if (!err)
          res.json(cnvs);
       req.cnn.release();
    }
-   if(!req.query.owner){
-      req.cnn.chkQry('select id, title, ownerId, lastMessage from Conversation'
-                     , null, cb);
-   }else{
-      req.cnn.chkQry('select id, title, ownerId, lastMessage from '
-                     + 'Conversation where ownerId = ?', req.query.owner, cb);
-   }
+   async.waterfall([
+   function(cb) {
+      if (!req.query.owner) {
+         req.cnn.chkQry('select id, title, ownerId, content from Project',
+                        null, cb);
+      }else{
+         req.cnn.chkQry('select id, title, ownerId, content from '
+                        + 'Project where ownerId = ?', req.query.owner, cb);
+      }
+   },
+   function(prjArr, cb) {
+      for(var prj in prjArr) {
+         req.cnn.chkQry /* add logic to get numLikes. should numLikes be an attribute of a project? */
+      }
+   }],
+   function(err) {
+      if(err){
+         res.status(500).end()
+      }
+      cnn.release();
+   });
 });
+
 router.get('/:id', function(req, res) {
    var vld = req.validator;
    cb = function(err, cnvs) {
@@ -27,8 +42,8 @@ router.get('/:id', function(req, res) {
          res.json(cnvs[0]).status(200).send();
       req.cnn.release();
    }
-   req.cnn.chkQry('select id, title, ownerId, lastMessage from '+
-                  'Conversation where id = ?', req.params.id, cb);
+   req.cnn.chkQry('select id, title, ownerId, content from '+
+                  'Project where id = ?', req.params.id, cb);
 });
 
 
@@ -36,21 +51,18 @@ router.post('/', function(req, res) {
    var vld = req.validator;
    var body = req.body;
    var cnn = req.cnn;
-   body.ownerId = req.session.id
+   body.ownerId = req.session.id;
+
    async.waterfall([
    function(cb) {
-      if(vld.check(req.body.title, Tags.missingField, ["title"], cb) &&
+      if(vld.hasFields(body, ["title", "content", "thumbnail"], cb) &&
          vld.check(req.body.title.length <= kMaxTitleLen, Tags.badValue,
-                   ["title"], cb))
-      cnn.chkQry('select * from Conversation where title = ?', 
-                  [body.title], cb);
-   },
-   function(existingCnv, fields, cb) {
-      if (vld.check(!existingCnv.length, Tags.dupTitle, null, cb))
-         cnn.chkQry("insert into Conversation set ?", [body], cb);
+          ["title"], cb))
+         cnn.chkQry('select * from Conversation where title = ?', 
+          [body.title], cb);
    },
    function(insRes, fields, cb) {
-      res.status(200).location(router.baseURL +"/"+insRes.insertId).end();
+      res.status(200).location(router.baseURL + "/" + insRes.insertId).end();
       cb();
    }],
    function(err) {

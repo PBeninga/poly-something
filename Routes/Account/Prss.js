@@ -9,29 +9,10 @@ router.baseURL = '/Prss';
 /* Much nicer versions
 */
 router.get('/', function(req, res) {
-   var email = req.session.isAdmin() && req.query.email
-   if(!req.session.isAdmin() && !req.query.email){
-      email = req.session.email
-   }else if(!req.session.isAdmin() && req.session.email.toLowerCase().
-            indexOf(req.query.email.toLowerCase()) === 0){
-      email = req.session.email;
-   }else if(!req.session.isAdmin()){
-      email =  "**************"
-   }
-
-   var handler = function(err, prsArr) {
+   req.cnn.chkQry('select id, handle from Person', function(err, prsArr) {
       res.json(prsArr);
       req.cnn.release();
-   };
-   if (email && req.session.isAdmin()){
-      req.cnn.chkQry('select id, email from Person where email LIKE ?', 
-      [email+"%"], handler);
-   }else if(email){
-      req.cnn.chkQry('select id, email from Person where email = ?', 
-      [email], handler);
-   }
-   else
-      req.cnn.chkQry('select id, email from Person', handler);
+   })
 });
 
 router.post('/', function(req, res) {
@@ -46,7 +27,7 @@ router.post('/', function(req, res) {
 
    async.waterfall([
    function(cb) { // Check properties and search for Email duplicates
-      if (vld.hasFields(body, ["email", "password", "role", "lastName"], cb) &&
+      if (vld.hasFields(body, ["email", "password", "role", "handle"], cb) &&
        vld.chain(body.role === 0 || admin, Tags.noPermission)
        .chain(body.termsAccepted || admin, Tags.noTerms)
        .check(body.role === 0  || body.role === 1, Tags.badValue, 
@@ -57,7 +38,7 @@ router.post('/', function(req, res) {
    function(existingPrss, fields, cb) {  // If no duplicates, insert new Person
       if (vld.check(!existingPrss.length, Tags.dupEmail, null, cb)) {
          if(body.termsAccepted)
-            body.termsAccepted = new Date().getTime();
+            body.termsAccepted = body.whenRegistered;
          cnn.chkQry('insert into Person set ?', body, cb);
       }
    },
@@ -76,6 +57,7 @@ router.put('/:id', function(req, res) {
    var body = req.body;
    var admin = req.session && req.session.isAdmin();
    var cnn = req.cnn;
+
    async.waterfall([function(cb){
          if (vld.checkPrsOK(req.params.id, cb) && 
             vld.chain(!("termsAccepted" in body), Tags.forbiddenField, 
@@ -93,7 +75,7 @@ router.put('/:id', function(req, res) {
           cb();
        }},
        function(prsArr, fields, cb){
-         if(vld.check(prsArr !== 1, Tags.notFound, ['notFound'], cb) && 
+         if(vld.check(prsArr !== 1 /* how tf does this work? */, Tags.notFound, ['notFound'], cb) && 
             vld.check("oldPassword" in body || admin || !("password" in body), 
             Tags.noOldPwd, null, cb) &&
             vld.check(body.oldPassword === prsArr[0]['password'] 
