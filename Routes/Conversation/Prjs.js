@@ -5,30 +5,18 @@ var async = require('async');
 
 var kMaxTitleLen = 80;
 router.baseURL = '/Prjs';
-//?owner=id
-router.get('/', function(req, res) { /* do we want to add optional owner param? */
-   cb = function(err, cnvs) {
-      if (!err)
-         res.json(cnvs);
-      req.cnn.release();
-   }
+
+router.get('/', function(req, res) {
    async.waterfall([
    function(cb) {
-      if (!req.query.owner) {
-         req.cnn.chkQry('select id, title, ownerId, content from Project',
-                        null, cb);
-      }else{
-         req.cnn.chkQry('select id, title, ownerId, content from '
-                        + 'Project where ownerId = ?', req.query.owner, cb);
-      }
+      req.cnn.chkQry('select id, title, ownerId, content from Project',
+       null, cb);
    },
    function(prjArr, cb) {
-      for(var prj in prjArr) {
-         req.cnn.chkQry /* add logic to get numLikes. should numLikes be an attribute of a project? */
-      }
+      req.cnn.chkQry /* add logic to get numLikes, PATRICK */
    }],
    function(err) {
-      if(err){
+      if (err) {
          res.status(500).end()
       }
       cnn.release();
@@ -42,8 +30,31 @@ router.get('/:id', function(req, res) {
          res.json(cnvs[0]).status(200).send();
       req.cnn.release();
    }
-   req.cnn.chkQry('select id, title, ownerId, content from '+
-                  'Project where id = ?', req.params.id, cb);
+   async.waterfall([
+   function(cb) {
+      req.cnn.chkQry('select id, title, ownerId, content from ' +
+       'Project where id = ?', [req.params.id], cb);
+   },
+   function(cnvs, fields, cb) {
+      if (vld.check(cnvs.length, Tags.notFound, null, cb)) {
+         req.cnn.chkQry('select count(prjId) from Like where prjId = ?',
+          [req.params.id],
+          function(err, numLikes, fields) {
+            cnvs[0].numLikes = numLikes;
+            cb(err, cnvs[0], fields);
+          });
+      }
+   },
+   function(cnv, fields, cb) {
+      res.json(cnv);
+      cb();
+   }],
+   function(err) {
+      if(err) {
+         res.status(500).end();
+      }
+      cnn.release();
+   })
 });
 
 
@@ -55,10 +66,10 @@ router.post('/', function(req, res) {
 
    async.waterfall([
    function(cb) {
-      if(vld.hasFields(body, ["title", "content", "thumbnail"], cb) &&
-         vld.check(req.body.title.length <= kMaxTitleLen, Tags.badValue,
-          ["title"], cb))
-         cnn.chkQry('select * from Conversation where title = ?', 
+      if (vld.hasFields(body, ["title", "content", "thumbnail"], cb) &&
+       vld.check(req.body.title.length <= kMaxTitleLen, Tags.badValue,
+       ["title"], cb))
+         cnn.chkQry('select * from Project where title = ?', 
           [body.title], cb);
    },
    function(insRes, fields, cb) {

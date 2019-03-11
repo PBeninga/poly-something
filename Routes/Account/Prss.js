@@ -31,7 +31,7 @@ router.post('/', function(req, res) {
        vld.chain(body.role === 0 || admin, Tags.noPermission)
        .chain(body.termsAccepted || admin, Tags.noTerms)
        .check(body.role === 0  || body.role === 1, Tags.badValue, 
-         ["role"], cb)) {
+       ["role"], cb)) {
          cnn.chkQry('select * from Person where email = ?', body.email, cb)
       }
    },
@@ -71,11 +71,11 @@ router.put('/:id', function(req, res) {
              body.password), Tags.badValue, ['password'],cb)){
             req.cnn.chkQry('select * from Person where id = ?', 
             [req.params.id], cb);   
-       }else{
+       } else {
           cb();
        }},
        function(prsArr, fields, cb){
-         if(vld.check(prsArr !== 1 /* how tf does this work? */, Tags.notFound, ['notFound'], cb) && 
+         if(vld.check(prsArr.length !== 1 /* how tf does this work? */, Tags.notFound, ['notFound'], cb) && 
             vld.check("oldPassword" in body || admin || !("password" in body), 
             Tags.noOldPwd, null, cb) &&
             vld.check(body.oldPassword === prsArr[0]['password'] 
@@ -83,21 +83,22 @@ router.put('/:id', function(req, res) {
                      Tags.oldPwdMismatch, ['oldPwdMismatch'], cb)){
                      delete body.oldPassword;
                      console.log(body)
-                     if(!Object.keys(body).length){
+                     if (!Object.keys(body).length) {
                         cb()
-                     }else{
+                     }
+                     else{
                         cnn.chkQry('update Person set ? where id = ?', 
-                                    [body, req.params.id], cb)
+                         [body, req.params.id], cb)
                      }
                }          
        }
-   ], function(err){
+   ], function(err) {
        if(!err){
           res.status(200).end();
        }
        console.log("released")
        cnn.release();
-      });
+       });
    
 });
 
