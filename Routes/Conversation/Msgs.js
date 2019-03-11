@@ -3,7 +3,7 @@ var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
 var async = require('async');
 
-router.baseURL = '/Msgs';
+router.baseURL = '/REST/Msgs';
 
 router.get('/:msgId', function(req, res) {
    var vld = req.validator;

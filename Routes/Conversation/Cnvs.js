@@ -4,7 +4,7 @@ var router = Express.Router({caseSensitive: true});
 var async = require('async');
 
 var kMaxTitleLen = 80;
-router.baseURL = '/Prjs';
+router.baseURL = '/REST/Cnvs';
 //?owner=id
 router.get('/', function(req, res) { /* do we want to add optional owner param? */
    cb = function(err, cnvs) {
