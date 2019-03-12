@@ -4,21 +4,25 @@ var router = Express.Router({caseSensitive: true});
 var async = require('async');
 
 var kMaxTitleLen = 80;
+var kMaxContentLen = 10000;
+var kMaxContributorsLen = 200;
+var kMaxCategoryLen = 30;
 router.baseURL = '/Prjs';
 
 // optional params timePosted and category
 router.get('/', function(req, res) {
-   var query = 'select id, title, ownerId, content, category, count(prsId) as ' +
-    'numLikes from Project left join (select prjId, count(prsId) from Like ' +
-    'group by prjId) on id = prjId where timePosted >= ?';
+   var cnn = req.cnn;
+   var query = 'select id, title, thumbnail, ownerId, timePosted, category, numLikes ' +
+    'from Project p left join (select prjId, count(prsId) as numLikes from Likes ' +
+    'group by prjId) l on p.id = prjId where timePosted >= ?';
    var params = [];
 
-   if (req.params.timePosted) 
+   if (req.params.timePosted && !isNaN(req.params.timePosted)) 
       params.push(parseInt(req.params.timePosted));
    else
       params.push(0);
    
-   if(req.params.category && req.params.category.length) {
+   if(req.params.category) {
       query += ' and category = ?';
       params.push(req.params.category);
    }
@@ -27,7 +31,7 @@ router.get('/', function(req, res) {
    function(cb) {
       req.cnn.chkQry(query, params, cb);
    },
-   function(prjArr, cb) {
+   function(prjArr, fields, cb) {
       res.json(prjArr);
       cb();
    }],
@@ -41,6 +45,7 @@ router.get('/', function(req, res) {
 
 router.get('/:id', function(req, res) {
    var vld = req.validator;
+   var cnn = req.cnn;
 
    cb = function(err, prjs) {
       if (!err && vld.check(prjs.length, Tags.notFound, null, null))
@@ -50,15 +55,15 @@ router.get('/:id', function(req, res) {
 
    async.waterfall([
    function(cb) {
-      req.cnn.chkQry('select id, title, ownerId, category, content from ' +
-       'Project where id = ?', [req.params.id], cb);
-   },
+      req.cnn.chkQry('select * from Project where Project.id = ?',
+       [req.params.id], cb);
+},
    function(prjs, fields, cb) { // count might return table still, I treat it as int
       if (vld.check(prjs.length, Tags.notFound, null, cb)) {
-         req.cnn.chkQry('select count(prjId) from Like where prjId = ?',
+         req.cnn.chkQry('select count(prjId) as numLikes from Likes where prjId = ?',
           [req.params.id],
-          function(err, numLikes, fields) {
-            prjs[0].numLikes = numLikes;
+          function(err, likeEntries, fields) {
+            prjs[0].numLikes = likeEntries[0].numLikes;
             cb(err, prjs[0], fields);
           });
       }
@@ -75,21 +80,26 @@ router.get('/:id', function(req, res) {
    })
 });
 
-
+// need to handle thumbnail size
 router.post('/', function(req, res) {
    var vld = req.validator;
    var body = req.body;
    var cnn = req.cnn;
-   body.ownerId = req.session.id;
 
+   body.ownerId = req.session.id;
    async.waterfall([
    function(cb) {
-      if (vld.hasFields(body, ["title", "content", "thumbnail"], cb) &&
+      if (vld.check(req.session, Tags.noLogin, null, cb) &&
+       vld.hasFields(body, ["title", "content", "thumbnail", "contributors", "category"], cb) &&
        vld.chain(req.body.title.length <= kMaxTitleLen, Tags.badValue,
        ["title"], cb)
        .chain(req.body.content.length <= kMaxContentLen, Tags.badValue,
        ["content"], cb)
-       .check(req.session, Tags.noLogin, null, cb)) {
+       .chain(req.body.contributors.length <= kMaxContributorsLen, Tags.badValue,
+       ["contributors"], cb)
+       .chain(req.body.category.length <= kMaxCategoryLen, Tags.badValue,
+       ["category"], cb)) {
+         body.timePosted = new Date().getTime();
          cnn.chkQry('insert into Project set ?', body, cb);
       }
    },
@@ -116,17 +126,22 @@ router.put('/:prjId', function(req, res) {
       if (vld.chain(!body.title || body.title.length <= kMaxTitleLen,
        Tags.badValue, ["title"], cb)
        .chain(!body.content || body.content.length <= kMaxContentLen,
-       Tags.badValue, ["content"], cb))
+       Tags.badValue, ["content"], cb)
+       .chain(!body.contributors || body.contributors.length <= kMaxContributorsLen,
+       Tags.badValue, ["contributors"], cb)
+       .chain(!body.category || body.category.length <= kMaxCategoryLen,
+       Tags.badValue, ["category"], cb))
          cnn.chkQry('select * from Project where id = ?', [prjId], cb);
    },
    function(prjs, fields, cb) {
       if (vld.check(prjs.length, Tags.notFound, null, cb) && 
        vld.checkPrsOK(prjs[0].ownerId, cb))
          cnn.chkQry('update Project set title = ?, content = ?, ' +
-          'thumbnail = ?, contributors = ? where id = ?',
+          'thumbnail = ?, contributors = ?, category = ? where id = ?',
           [body.title || prjs[0].title, body.content || prjs[0].content,
           body.thumbnail || prjs[0].thumbnail,
-          body.contributors || prjs[0].contributors, prjId], cb);
+          body.contributors || prjs[0].contributors,
+          body.category || prjs[0].category, prjId], cb);
    }],
    function(err) {
       if (!err)

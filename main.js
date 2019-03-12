@@ -45,23 +45,18 @@ app.use(Session.router);
 // otherwise respond immediately with 401 and noLogin error tag.
 app.use(function(req, res, next) {
    console.log(req.path);
-   if (req.session || (req.method === 'POST' &&
-    (req.path === '/Prss' || req.path === '/Ssns'))) {
-      req.validator = new Validator(req, res);
-      console.log("At creation of validator")
-      next();
-   } else
-      res.status(401).end();
+   req.validator = new Validator(req, res);
+   next();
 });
 
 // Add DB connection, with smart chkQry method, to |req|
 app.use(CnnPool.router);
 
 // Load all subroutes
-app.use('/Msgs', require('./Routes/Conversation/Msgs.js'))
+app.use('/Cmts', require('./Routes/Conversation/Cmts.js'))
 app.use('/Prss', require('./Routes/Account/Prss.js'));
 app.use('/Ssns', require('./Routes/Account/Ssns.js'));
-app.use('/Cnvs', require('./Routes/Conversation/Cnvs.js'));
+app.use('/Prjs', require('./Routes/Conversation/Prjs.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents,
 //resets all auto_increment keys to start at 1, and reinserts one admin user.
@@ -72,7 +67,7 @@ app.delete('/DB', function(req, res) {
       req.cnn.release()
       return
    }
-   var cbs = ["Conversation", "Message", "Person"].
+   var cbs = ["Project", "Comment", "Person", "Likes"].
                map(function(tblName) {
       return function(cb) {
          req.cnn.query("delete from " + tblName, cb);
@@ -80,7 +75,7 @@ app.delete('/DB', function(req, res) {
    });
 
    // Callbacks to reset increment bases
-   cbs = cbs.concat(["Conversation", "Message", "Person"].
+   cbs = cbs.concat(["Project", "Comment", "Person", "Likes"].
          map(function(tblName){
       return function(cb) {
          req.cnn.query("alter table " + tblName + " auto_increment = 1", cb);
@@ -89,9 +84,9 @@ app.delete('/DB', function(req, res) {
 
    // Callback to reinsert admin user
    cbs.push(function(cb) {
-      req.cnn.query('INSERT INTO Person (firstName, lastName, email,' +
-          ' password, whenRegistered, role) VALUES ' +
-          '("Joe", "Admin", "adm@11.com","password", NOW(), 1);', cb);
+      req.cnn.query('INSERT INTO Person (email, handle,' +
+          ' password, role) VALUES ' +
+          '("admin@aol.net", "admin", "password", 1);', cb);
    });
 
    // Callback to clear sessions, release connection and return result
