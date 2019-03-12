@@ -26,12 +26,14 @@ router.get('/', function(req, res) {
       query += ' and category = ?';
       params.push(req.params.category);
    }
+   query += ' order by numLikes desc'
 
    async.waterfall([
    function(cb) {
       req.cnn.chkQry(query, params, cb);
    },
    function(prjArr, fields, cb) {
+      prjArr.forEach(prj => prj.numLikes = prj.numLikes ? prj.numLikes : 0);
       res.json(prjArr);
       cb();
    }],
@@ -63,7 +65,7 @@ router.get('/:id', function(req, res) {
          req.cnn.chkQry('select count(prjId) as numLikes from Likes where prjId = ?',
           [req.params.id],
           function(err, likeEntries, fields) {
-            prjs[0].numLikes = likeEntries[0].numLikes;
+            prjs[0].numLikes = likeEntries[0].numLikes ? likeEntries[0].numLikes : 0;
             cb(err, prjs[0], fields);
           });
       }
