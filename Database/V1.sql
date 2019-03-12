@@ -23,7 +23,7 @@ create table Comment (
    cnvId int not null,
    prsId int not null,
    content varchar(1000) not null,
-   constraint FKMessage_cnvId foreign key (cnvId) references Conversation(id)
+   constraint FKMessage_cnvId foreign key (prjId) references Conversation(id)
     on delete cascade,
    constraint FKMessage_prsId foreign key (prsId) references Person(id)
     on delete cascade
