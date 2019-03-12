@@ -9,7 +9,7 @@ router.baseURL = '/Prss';
 /* Much nicer versions
 */
 router.get('/', function(req, res) {
-   req.cnn.chkQry('select id, handle from Person', function(err, prsArr) {
+   req.cnn.chkQry('select id, handle, email from Person', function(err, prsArr) {
       res.json(prsArr);
       req.cnn.release();
    })
@@ -23,22 +23,18 @@ router.post('/', function(req, res) {
 
    if (admin && !body.password)
       body.password = "*";
-   body.whenRegistered = new Date().getTime();
-
+   
    async.waterfall([
    function(cb) { // Check properties and search for Email duplicates
       if (vld.hasFields(body, ["email", "password", "role", "handle"], cb) &&
        vld.chain(body.role === 0 || admin, Tags.noPermission)
-       .chain(body.termsAccepted || admin, Tags.noTerms)
        .check(body.role === 0  || body.role === 1, Tags.badValue, 
-         ["role"], cb)) {
+       ["role"], cb)) {
          cnn.chkQry('select * from Person where email = ?', body.email, cb)
       }
    },
    function(existingPrss, fields, cb) {  // If no duplicates, insert new Person
       if (vld.check(!existingPrss.length, Tags.dupEmail, null, cb)) {
-         if(body.termsAccepted)
-            body.termsAccepted = body.whenRegistered;
          cnn.chkQry('insert into Person set ?', body, cb);
       }
    },
@@ -60,22 +56,18 @@ router.put('/:id', function(req, res) {
 
    async.waterfall([function(cb){
          if (vld.checkPrsOK(req.params.id, cb) && 
-            vld.chain(!("termsAccepted" in body), Tags.forbiddenField, 
-            ['termsAccepted']).
-            chain(!("whenRegistered" in body), Tags.forbiddenField, 
-            ['whenRegistered']).
-            chain(!("email" in body),  Tags.forbiddenField, ['email']).
-            chain((admin  && (body.role == 0 || body.role == 1) || 
-            !("role" in body) || body.role == 0), Tags.badValue, ['role']).
-            check(!("password" in body) || (body.password !== "" &&
+            vld.chain(!("email" in body),  Tags.forbiddenField, ['email'])
+            .chain((admin  && (body.role == 0 || body.role == 1) || 
+            !("role" in body) || body.role == 0), Tags.badValue, ['role'])
+            .check(!("password" in body) || (body.password !== "" &&
              body.password), Tags.badValue, ['password'],cb)){
             req.cnn.chkQry('select * from Person where id = ?', 
-            [req.params.id], cb);   
-       }else{
+            [req.params.id], cb);
+       } else {
           cb();
        }},
        function(prsArr, fields, cb){
-         if(vld.check(prsArr !== 1 /* how tf does this work? */, Tags.notFound, ['notFound'], cb) && 
+         if(vld.check(prsArr.length !== 1 , Tags.notFound, ['notFound'], cb) && 
             vld.check("oldPassword" in body || admin || !("password" in body), 
             Tags.noOldPwd, null, cb) &&
             vld.check(body.oldPassword === prsArr[0]['password'] 
@@ -83,21 +75,22 @@ router.put('/:id', function(req, res) {
                      Tags.oldPwdMismatch, ['oldPwdMismatch'], cb)){
                      delete body.oldPassword;
                      console.log(body)
-                     if(!Object.keys(body).length){
+                     if (!Object.keys(body).length) {
                         cb()
-                     }else{
+                     }
+                     else{
                         cnn.chkQry('update Person set ? where id = ?', 
-                                    [body, req.params.id], cb)
+                         [body, req.params.id], cb)
                      }
                }          
        }
-   ], function(err){
+   ], function(err) {
        if(!err){
           res.status(200).end();
        }
        console.log("released")
        cnn.release();
-      });
+       });
    
 });
 
