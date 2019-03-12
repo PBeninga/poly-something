@@ -81,6 +81,7 @@ router.get('/:id', function(req, res) {
 });
 
 // need to handle thumbnail size
+
 router.post('/', function(req, res) {
    var vld = req.validator;
    var body = req.body;
