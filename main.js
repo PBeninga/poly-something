@@ -15,6 +15,7 @@ if (process.argv.indexOf("-p") != -1) { //does our flag exist?
 }
 //app.use(function(req, res, next) {console.log("Hello"); next();});
 // Static paths to be served like index.html and all client side js
+app.use(express.static(path.join(__dirname, 'client/build')))
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
@@ -45,22 +46,27 @@ app.use(Session.router);
 // otherwise respond immediately with 401 and noLogin error tag.
 app.use(function(req, res, next) {
    console.log(req.path);
-   req.validator = new Validator(req, res);
-   next();
+   if (req.session || (req.method === 'POST' &&
+    (req.path === '/REST/Prss' || req.path === '/REST/Ssns'))) {
+      req.validator = new Validator(req, res);
+      console.log("At creation of validator")
+      next();
+   } else
+      res.status(401).end();
 });
 
 // Add DB connection, with smart chkQry method, to |req|
 app.use(CnnPool.router);
 
 // Load all subroutes
-app.use('/Cmts', require('./Routes/Conversation/Cmts.js'))
-app.use('/Prss', require('./Routes/Account/Prss.js'));
-app.use('/Ssns', require('./Routes/Account/Ssns.js'));
-app.use('/Prjs', require('./Routes/Conversation/Prjs.js'));
+app.use('/REST/Msgs', require('./Routes/Conversation/Msgs.js'))
+app.use('/REST/Prss', require('./Routes/Account/Prss.js'));
+app.use('/REST/Ssns', require('./Routes/Account/Ssns.js'));
+app.use('/REST/Cnvs', require('./Routes/Conversation/Cnvs.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents,
 //resets all auto_increment keys to start at 1, and reinserts one admin user.
-app.delete('/DB', function(req, res) {
+app.delete('/REST/DB', function(req, res) {
    // Callbacks to clear tables
    if(!req.session.isAdmin()){
       res.status(403).end()

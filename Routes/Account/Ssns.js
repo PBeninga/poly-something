@@ -3,7 +3,7 @@ var Tags = require('../Validator.js').Tags;
 var ssnUtil = require('../Session.js');
 var router = Express.Router({caseSensitive: true});
 
-router.baseURL = '/Ssns';
+router.baseURL = '/REST/Ssns';
 
 router.get('/', function(req, res) {
    var body = [], ssn;

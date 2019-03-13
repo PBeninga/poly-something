@@ -13,7 +13,8 @@
   "devDependencies": {},
   "scripts": {
     "test": "node main.js",
-    "start": "node main.js"
+    "start": "node main.js",
+    "heroku-postbuild": "cd ReactJSClient && npm install && npm run build"
   },
   "author": [
     "Johnathan Nicholson",

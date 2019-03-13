@@ -5,7 +5,7 @@ var mysql = require('mysql');
 
 var router = Express.Router({caseSensitive: true});
 
-router.baseURL = '/Prss';
+router.baseURL = '/REST/Prss';
 /* Much nicer versions
 */
 router.get('/', function(req, res) {
