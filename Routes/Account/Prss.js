@@ -9,10 +9,16 @@ router.baseURL = '/REST/Prss';
 /* Much nicer versions
 */
 router.get('/', function(req, res) {
-   req.cnn.chkQry('select id, handle, email from Person', function(err, prsArr) {
+   var cb = function(err, prsArr) {
       res.json(prsArr);
       req.cnn.release();
-   })
+   }
+   
+   if(req.session.isAdmin())
+      req.cnn.chkQry('select id, handle, email from Person', null, cb);
+   else
+      req.cnn.chkQry('select id, handle, email from Person where id = ?',
+       [req.session.id], cb);
 });
 
 router.post('/', function(req, res) {
@@ -54,7 +60,8 @@ router.put('/:id', function(req, res) {
    var admin = req.session && req.session.isAdmin();
    var cnn = req.cnn;
 
-   async.waterfall([function(cb){
+   async.waterfall([
+      function(cb){
          if (vld.checkPrsOK(req.params.id, cb) && 
             vld.chain(!("email" in body),  Tags.forbiddenField, ['email'])
             .chain((admin  && (body.role == 0 || body.role == 1) || 
@@ -63,26 +70,26 @@ router.put('/:id', function(req, res) {
              body.password), Tags.badValue, ['password'],cb)){
             req.cnn.chkQry('select * from Person where id = ?', 
             [req.params.id], cb);
-       } else {
+         }
+         else {
           cb();
        }},
-       function(prsArr, fields, cb){
-         if(vld.check(prsArr.length !== 1 , Tags.notFound, ['notFound'], cb) && 
-            vld.check("oldPassword" in body || admin || !("password" in body), 
-            Tags.noOldPwd, null, cb) &&
-            vld.check(body.oldPassword === prsArr[0]['password'] 
-                     || admin || !("password" in body), 
-                     Tags.oldPwdMismatch, ['oldPwdMismatch'], cb)){
-                     delete body.oldPassword;
-                     console.log(body)
-                     if (!Object.keys(body).length) {
-                        cb()
-                     }
-                     else{
-                        cnn.chkQry('update Person set ? where id = ?', 
-                         [body, req.params.id], cb)
-                     }
-               }          
+       function(prsArr, fields, cb) {
+         if(vld.check(prsArr.length, Tags.notFound, ['notFound'], cb) && 
+          vld.check("oldPassword" in body || admin || !("password" in body), 
+          Tags.noOldPwd, null, cb) &&
+          vld.check(body.oldPassword === prsArr[0]['password'] 
+          || admin || !("password" in body), 
+          Tags.oldPwdMismatch, ['oldPwdMismatch'], cb)) {
+            delete body.oldPassword;
+            if (!Object.keys(body).length) {
+               cb()
+            }
+            else {
+               cnn.chkQry('update Person set ? where id = ?', 
+               [body, req.params.id], cb)
+            }
+         }          
        }
    ], function(err) {
        if(!err){

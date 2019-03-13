@@ -1,3 +1,6 @@
+# connection.json file (has personal mysql info)
+./Routes/connection.json
+
 # Logs
 logs
 *.log

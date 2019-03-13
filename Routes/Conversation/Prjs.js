@@ -26,12 +26,14 @@ router.get('/', function(req, res) {
       query += ' and category = ?';
       params.push(req.params.category);
    }
+   query += ' order by numLikes desc'
 
    async.waterfall([
    function(cb) {
       req.cnn.chkQry(query, params, cb);
    },
    function(prjArr, fields, cb) {
+      prjArr.forEach(prj => prj.numLikes = prj.numLikes ? prj.numLikes : 0);
       res.json(prjArr);
       cb();
    }],
@@ -63,7 +65,7 @@ router.get('/:id', function(req, res) {
          req.cnn.chkQry('select count(prjId) as numLikes from Likes where prjId = ?',
           [req.params.id],
           function(err, likeEntries, fields) {
-            prjs[0].numLikes = likeEntries[0].numLikes;
+            prjs[0].numLikes = likeEntries[0].numLikes ? likeEntries[0].numLikes : 0;
             cb(err, prjs[0], fields);
           });
       }
@@ -73,7 +75,7 @@ router.get('/:id', function(req, res) {
       cb();
    }],
    function(err) {
-      if(err) {
+      if (err) {
          res.status(500).end();
       }
       cnn.release();
@@ -91,13 +93,13 @@ router.post('/', function(req, res) {
    async.waterfall([
    function(cb) {
       if (vld.check(req.session, Tags.noLogin, null, cb) &&
-       vld.hasFields(body, ["title", "content", "thumbnail", "contributors", "category"], cb) &&
+       vld.hasFields(body, ["title", "content", "thumbnail", "category"], cb) &&
        vld.chain(req.body.title.length <= kMaxTitleLen, Tags.badValue,
        ["title"], cb)
        .chain(req.body.content.length <= kMaxContentLen, Tags.badValue,
        ["content"], cb)
-       .chain(req.body.contributors.length <= kMaxContributorsLen, Tags.badValue,
-       ["contributors"], cb)
+       .chain(!req.body.contributors || req.body.contributors.length <=
+       kMaxContributorsLen, Tags.badValue, ["contributors"], cb)
        .chain(req.body.category.length <= kMaxCategoryLen, Tags.badValue,
        ["category"], cb)) {
          body.timePosted = new Date().getTime();
@@ -124,7 +126,8 @@ router.put('/:prjId', function(req, res) {
 
    async.waterfall([
    function(cb) {
-      if (vld.chain(!body.title || body.title.length <= kMaxTitleLen,
+      if (vld.check(req.session, Tags.noLogin, null, cb) &&
+       vld.chain(!body.title || body.title.length <= kMaxTitleLen,
        Tags.badValue, ["title"], cb)
        .chain(!body.content || body.content.length <= kMaxContentLen,
        Tags.badValue, ["content"], cb)

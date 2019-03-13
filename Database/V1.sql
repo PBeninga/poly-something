@@ -6,7 +6,7 @@ create table Person (
    id int auto_increment primary key,
    email varchar(30) not null,
    handle varchar(30) not null,
-   password varchar(50),
+   password varchar(50) not null,
    role int unsigned not null,  # 0 normal, 1 admin
    unique key(email)
 );
@@ -17,7 +17,7 @@ create table Project (
    title varchar(80) not null,
    content varchar(10000) not null,
    thumbnail blob(65535) not null,
-   contributors varchar(200),
+   contributors varchar(200) default "",
    category varchar(30) not null,
    timePosted bigInt not null,
    constraint FKMessage_ownerId foreign key (ownerId) references Person(id)

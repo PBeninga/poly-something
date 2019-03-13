@@ -9,12 +9,13 @@ var async = require('async');
 var fs = require('fs')
 
 var app = express();
-var port = 3000;
-if(process.argv.indexOf("-p") != -1){ //does our flag exist?
+var port = 3001;
+if (process.argv.indexOf("-p") != -1) { //does our flag exist?
    port = parseInt(process.argv[process.argv.indexOf("-p") + 1]); //grab the next item
 }
 //app.use(function(req, res, next) {console.log("Hello"); next();});
 // Static paths to be served like index.html and all client side js
+app.use(express.static(path.join(__dirname, 'client/build')))
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.use(function(req, res, next) {
@@ -46,10 +47,11 @@ app.use(Session.router);
 app.use(function(req, res, next) {
    console.log(req.path);
 
-   if (!req.session && (req.method === 'POST' &&
+   if (!req.session && ((req.method === 'POST' &&
     (req.path.startsWith('/REST/Cmts/') ||
     req.path.startsWith('/REST/Liks/') ||
-    req.path === '/REST/Prjs'))) {
+    req.path === '/REST/Prjs') ||
+    (req.method === 'GET' && req.path === '/REST/Prss')))) {
       res.status(401).end();
    } else {
       req.validator = new Validator(req, res);
