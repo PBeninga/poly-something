@@ -3,11 +3,11 @@ import {
    Modal, Button, FormControl, ControlLabel, FormGroup, HelpBlock
 } from 'react-bootstrap';
 
-export default class CnvModal extends Component {
+export default class CmtModal extends Component {
    constructor(props) {
       super(props);
       this.state = {
-         cnvTitle: (this.props.cnv && this.props.cnv.title) || "",
+         prjTitle: (this.props.prj && this.props.prj.title) || "",
       }
    }
 
@@ -15,25 +15,25 @@ export default class CnvModal extends Component {
       console.log("props: "+JSON.stringify(this.props))
       this.props.onDismiss && this.props.onDismiss({
          status: result,
-         title: this.state.cnvTitle,
-         id: this.props.cnvId
+         title: this.state.prjTitle,
+         id: this.props.prjId
       });
    }
 
    getValidationState = () => {
-      if (this.state.cnvTitle) {
-         return null
+      if (this.state.prjTitle) {
+         return null;
       }
       return "warning";
    }
 
    handleChange = (e) => {
-      this.setState({ cnvTitle: e.target.value });
+      this.setState({ prjTitle: e.target.value });
    }
 
    componentWillReceiveProps = (nextProps) => {
       if (nextProps.showModal) {
-         this.setState({ cnvTitle: (nextProps.cnv && nextProps.cnv.title) || "" })
+         this.setState({ prjTitle: (nextProps.prj && nextProps.prj.title) || "" })
       }
    }
 
@@ -45,20 +45,21 @@ export default class CnvModal extends Component {
             </Modal.Header>
             <Modal.Body>
                <form onSubmit={(e) =>
-                  e.preventDefault() || this.state.cnvTitle.length ?
+                  e.preventDefault() || this.state.prjTitle.length ?
                      this.close("Ok") : this.close("Cancel")}>
                   <FormGroup controlId="formBasicText"
                    validationState={this.getValidationState()}
                   >
-                     <ControlLabel>Conversation Title</ControlLabel>
+                     <ControlLabel>Comment</ControlLabel>
                      <FormControl
                         type="text"
-                        value={this.state.cnvTitle}
+                        componentClass = "textarea"
+                        value={this.state.prjTitle}
                         placeholder="Enter text"
                         onChange={this.handleChange}
                      />
                      <FormControl.Feedback />
-                     <HelpBlock>Title can not be empty.</HelpBlock>
+                     <HelpBlock>Comment Cannot be can not be empty.</HelpBlock>
                   </FormGroup>
                </form>
             </Modal.Body>
