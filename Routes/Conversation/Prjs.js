@@ -9,27 +9,44 @@ var kMaxContributorsLen = 200;
 var kMaxCategoryLen = 30;
 router.baseURL = '/REST/Prjs';
 
-// optional params timePosted and category
+// optional params timePosted, categories (list of category strings separated by |)
+// optional params limit, offset (if one is present, both must be present)
 router.get('/', function(req, res) {
    var cnn = req.cnn;
+   var vld = req.validator;
    var query = 'select id, title, thumbnail, ownerId, timePosted, category, numLikes ' +
     'from Project p left join (select prjId, count(prsId) as numLikes from Likes ' +
     'group by prjId) l on p.id = prjId where timePosted >= ?';
    var params = [];
+   var cats = [];
 
-   if (req.params.timePosted && !isNaN(req.params.timePosted)) 
-      params.push(parseInt(req.params.timePosted));
+   if (req.query.timePosted && !isNaN(req.query.timePosted)) 
+      params.push(parseInt(req.query.timePosted));
    else
       params.push(0);
    
-   if(req.params.category) {
-      query += ' and category = ?';
-      params.push(req.params.category);
+   if (req.query.categories) {
+      cats = req.query.categories.split("|");
+      query += ' and category in (';
+      cats.forEach((cat, i) => {
+         query += i ? ", ?" : "?";
+         params.push(cat);
+      })
+      query += ")";
    }
-   query += ' order by numLikes desc'
+
+   query += ' order by numLikes desc';
+
+   if (req.query.limit && req.query.offset) {
+      query += " limit ? offset ?";
+      params.push(parseInt(req.query.limit));
+      params.push(parseInt(req.query.offset));
+   }
 
    async.waterfall([
    function(cb) {
+      if (vld.check(req.query.limit && req.query.offset ||
+       !req.query.limit && !req.query.offset, Tags.badLimit, null, null))
       req.cnn.chkQry(query, params, cb);
    },
    function(prjArr, fields, cb) {
