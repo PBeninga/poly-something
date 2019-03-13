@@ -14,9 +14,9 @@ function mapStateToProps(state) {
    console.log("State is " + JSON.stringify(state));
    return {
       Prss: state.Prss,
-      Cnvs: state.Cnvs,
+      Prjs: state.Prjs,
       Errs: state.Errs,
-      Msgs: state.Msgs
+      Cmts: state.Cmts
    };
 }
 

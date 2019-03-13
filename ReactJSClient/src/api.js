@@ -112,8 +112,8 @@ export function signIn(cred) {
 export function signOut() {
     return del("Ssns/" + cookie);
 }
-export function deleteCnv(id){
-    return del(`Cnvs/${id}`)
+export function deletePrj(id){
+    return del(`Prjs/${id}`)
 }
 
 /**
@@ -124,31 +124,34 @@ export function deleteCnv(id){
 export function postPrs(user) {
    return post("Prss", user)
 }
-export function getMsgs(id){
-    return get(`Cnvs/${id}/Msgs`)
+
+export function getCmts(id){
+    return get(`Cmts/${id}`)
     .then(rsp => rsp.json());
 }
-export function sendMsg(cnvId, msg){
-    return post(`Cnvs/${cnvId}/Msgs`,{content:msg})
+
+export function postCmt(prjId, msg){
+    return post(`Cmts/${prjId}`,{content:msg})
 }
+
 /**
  * @returns {Promise} json parsed data
  */
-export function getCnvs(userId) {
-    return get("Cnvs" + (userId ? "?owner="+userId : ""))
+export function getPrjs(userId) {
+    return get("Prjs" + (userId ? "?owner="+userId : ""))
     .then((res) => res.json())
 }
 
-export function putCnv(id, body) {
+export function putPrj(id, body) {
     console.log(id + " " + JSON.stringify(body))
-    return put(`Cnvs/${id}`, body)
+    return put(`Prjs/${id}`, body)
 }
 
-export function postCnv(body) {
-    return post('Cnvs', body).then(rsp => {
+export function postPrj(body) {
+    return post('Prjs', body).then(rsp => {
       console.log(rsp)
       let location = rsp.headers.get("Location").split('/');
-      return get(`Cnvs/${location[location.length-1]}`);
+      return get(`Prjs/${location[location.length-1]}`);
    })
    .then(rsp => rsp.json());
 }
