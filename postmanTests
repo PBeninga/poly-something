@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "9de37d22-f2d3-4db8-ba26-c082a8b54123",
+		"_postman_id": "9f878576-7700-47a7-9ef8-f7be0df11c8d",
 		"name": "polysomething",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -491,6 +491,501 @@
 					],
 					"path": [
 						"Prjs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "da0bba5d-1da8-4bcb-a4af-d2990555e6ec",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"Hey man cool project u got there!\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Cmts/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Cmts",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Logout",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "bb79ce85-b328-4bb2-9d83-21d292ecfb42",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {},
+				"url": {
+					"raw": "{{url}}/Ssns/{{curLogin}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Ssns",
+						"{{curLogin}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add Comment Without Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "da0bba5d-1da8-4bcb-a4af-d2990555e6ec",
+						"exec": [
+							"tests[\"Status code is 401\"] = responseCode.code === 401;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"Hey man cool project u got there!\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Cmts/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Cmts",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "42057d61-c8f3-432c-8abb-0880d522120c",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Cmts/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Cmts",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Student B",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c4a777bb-3a6e-41ed-9892-12c1d33d0ecc",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"UserB@domainB\",\n    \"password\" : \"supmadoods420\",\n    \"role\"     : 0,\n    \"handle\": \"Billy Bob Joe\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Prss",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prss"
+					]
+				},
+				"description": "\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Login as Student B",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "690fe4a3-d765-42ec-8faa-f7908e561a0f",
+						"exec": [
+							"var locURL = postman.getResponseHeader(\"Location\").split('/');",
+							"var cookie = postman.getResponseCookie(\"CHSAuth\");",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
+							"",
+							"if (tests[\"Cookie Returned\"]) {",
+							"   postman.setEnvironmentVariable(\"curLogin\", cookie.value)",
+							"   tests[\"Cookie matches session\"] = locURL[locURL.length - 1]",
+							"    === cookie.value;",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"password\" : \"blorp\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Ssns",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Ssns"
+					]
+				},
+				"description": "Good Login\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Add Comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "da0bba5d-1da8-4bcb-a4af-d2990555e6ec",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"content\": \"Yeah I think it's pretty cool as well!\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Cmts/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Cmts",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Comments",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "42057d61-c8f3-432c-8abb-0880d522120c",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Cmts/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Cmts",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Like Project 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "17bce371-b989-4b21-9275-893b84d6fca4",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Liks/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Liks",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Like Project 1 Again",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "17bce371-b989-4b21-9275-893b84d6fca4",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Liks/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Liks",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Like Project 1 With Body",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "17bce371-b989-4b21-9275-893b84d6fca4",
+						"exec": [
+							"tests[\"Status code is 400\"] = responseCode.code === 400;",
+							"",
+							"tests[\"Error is forbiddenField\"] = responseBody.has(\"forbiddenField\");",
+							"",
+							"var jsonBody = JSON.parse(responseBody);",
+							"",
+							"tests[\"Body is correct length\"] = jsonBody.length === 2;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"value": "application/json",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"wow\": \"Bet you didn't expect this, huh?\",\n\t\"ok\": \"... and another field too? What kind of like is this??\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Liks/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Liks",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unlike Project 1",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0adcb5f1-06c8-4653-bc68-2108570342c5",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Liks/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Liks",
+						"1"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unlike Project 1 Again",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0adcb5f1-06c8-4653-bc68-2108570342c5",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Liks/1",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Liks",
+						"1"
 					]
 				}
 			},
