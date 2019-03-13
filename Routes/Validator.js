@@ -21,7 +21,8 @@ Validator.Tags = {
    oldPwdMismatch: "oldPwdMismatch",
    dupTitle: "dupTitle",            // Title duplicates an existing Conversation title
    queryFailed: "queryFailed",
-   forbiddenField: "forbiddenField"
+   forbiddenField: "forbiddenField",
+   badLimit: "badLimit"
 };
 
 // Check |test|.  If false, add an error with tag and possibly empty array

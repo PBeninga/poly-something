@@ -1,6 +1,6 @@
 {
     "host": "localhost",
-    "user": "pbeninga",
-    "password": "pbeninga",
-    "database": "pbeninga"
+    "user": "root",
+    "password": "sasquatch098",
+    "database": "polysomething"
 }
