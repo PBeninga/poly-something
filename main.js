@@ -46,13 +46,17 @@ app.use(Session.router);
 // otherwise respond immediately with 401 and noLogin error tag.
 app.use(function(req, res, next) {
    console.log(req.path);
-   if (req.session || (req.method === 'POST' &&
-    (req.path === '/REST/Prss' || req.path === '/REST/Ssns'))) {
-      req.validator = new Validator(req, res);
-      console.log("At creation of validator")
-      next();
-   } else
+
+   if (!req.session && ((req.method === 'POST' &&
+    (req.path.startsWith('/REST/Cmts/') ||
+    req.path.startsWith('/REST/Liks/') ||
+    req.path === '/REST/Prjs') ||
+    (req.method === 'GET' && req.path === '/REST/Prss')))) {
       res.status(401).end();
+   } else {
+      req.validator = new Validator(req, res);
+      next();
+   }
 });
 
 // Add DB connection, with smart chkQry method, to |req|
@@ -63,6 +67,7 @@ app.use('/REST/Cmts', require('./Routes/Conversation/Cmts.js'))
 app.use('/REST/Prss', require('./Routes/Account/Prss.js'));
 app.use('/REST/Ssns', require('./Routes/Account/Ssns.js'));
 app.use('/REST/Prjs', require('./Routes/Conversation/Prjs.js'));
+app.use('/REST/Liks', require('./Routes/Conversation/Liks.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents,
 //resets all auto_increment keys to start at 1, and reinserts one admin user.
