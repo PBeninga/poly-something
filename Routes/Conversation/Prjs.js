@@ -75,7 +75,7 @@ router.get('/:id', function(req, res) {
       cb();
    }],
    function(err) {
-      if(err) {
+      if (err) {
          res.status(500).end();
       }
       cnn.release();
@@ -93,13 +93,13 @@ router.post('/', function(req, res) {
    async.waterfall([
    function(cb) {
       if (vld.check(req.session, Tags.noLogin, null, cb) &&
-       vld.hasFields(body, ["title", "content", "thumbnail", "contributors", "category"], cb) &&
+       vld.hasFields(body, ["title", "content", "thumbnail", "category"], cb) &&
        vld.chain(req.body.title.length <= kMaxTitleLen, Tags.badValue,
        ["title"], cb)
        .chain(req.body.content.length <= kMaxContentLen, Tags.badValue,
        ["content"], cb)
-       .chain(req.body.contributors.length <= kMaxContributorsLen, Tags.badValue,
-       ["contributors"], cb)
+       .chain(!req.body.contributors || req.body.contributors.length <=
+       kMaxContributorsLen, Tags.badValue, ["contributors"], cb)
        .chain(req.body.category.length <= kMaxCategoryLen, Tags.badValue,
        ["category"], cb)) {
          body.timePosted = new Date().getTime();
@@ -126,7 +126,8 @@ router.put('/:prjId', function(req, res) {
 
    async.waterfall([
    function(cb) {
-      if (vld.chain(!body.title || body.title.length <= kMaxTitleLen,
+      if (vld.check(req.session, Tags.noLogin, null, cb) &&
+       vld.chain(!body.title || body.title.length <= kMaxTitleLen,
        Tags.badValue, ["title"], cb)
        .chain(!body.content || body.content.length <= kMaxContentLen,
        Tags.badValue, ["content"], cb)
