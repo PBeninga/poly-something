@@ -53,10 +53,10 @@ app.use(function(req, res, next) {
 app.use(CnnPool.router);
 
 // Load all subroutes
-app.use('/Cmts', require('./Routes/Conversation/Cmts.js'))
-app.use('/Prss', require('./Routes/Account/Prss.js'));
-app.use('/Ssns', require('./Routes/Account/Ssns.js'));
-app.use('/Prjs', require('./Routes/Conversation/Prjs.js'));
+app.use('/REST/Cmts', require('./Routes/Conversation/Cmts.js'))
+app.use('/REST/Prss', require('./Routes/Account/Prss.js'));
+app.use('/REST/Ssns', require('./Routes/Account/Ssns.js'));
+app.use('/REST/Prjs', require('./Routes/Conversation/Prjs.js'));
 
 // Special debugging route for /DB DELETE.  Clears all table contents,
 //resets all auto_increment keys to start at 1, and reinserts one admin user.

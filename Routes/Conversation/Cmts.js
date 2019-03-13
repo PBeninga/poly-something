@@ -3,7 +3,7 @@ var Tags = require('../Validator.js').Tags;
 var router = Express.Router({caseSensitive: true});
 var async = require('async');
 
-router.baseURL = '/cmts';
+router.baseURL = '/REST/Cmts';
 
 //?dateTime=das
 router.get('/:prjId', function(req, res) {
