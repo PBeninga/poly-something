@@ -24,11 +24,11 @@ export function getCmts(id, cb){
    };
 }
 
-export function newMsg(prjId, cmt, cb){
+export function newCmt(prjId, cmt, cb){
    return (dispatch, prevState) => {
    api.postCmt(prjId, cmt)
       .then(api.getCmts(prjId)
-      .then((cmts) => dispatch({type: 'UPDATE_MSGS', cmts})))
+      .then((cmts) => dispatch({type: 'UPDATE_CMTS', cmts})))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };

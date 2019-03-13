@@ -28,6 +28,7 @@ export default class PrjDetail extends Component {
       }
       this.openModal = this.openModal.bind(this)
    }
+
    openModal = (prj) => {
       const newState = { showModal: true };
       this.setState(newState);
