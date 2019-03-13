@@ -9,7 +9,7 @@ var async = require('async');
 var fs = require('fs')
 
 var app = express();
-var port = 3000;
+var port = 3001;
 if (process.argv.indexOf("-p") != -1) { //does our flag exist?
    port = parseInt(process.argv[process.argv.indexOf("-p") + 1]); //grab the next item
 }
