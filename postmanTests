@@ -1,0 +1,500 @@
+{
+	"info": {
+		"_postman_id": "9de37d22-f2d3-4db8-ba26-c082a8b54123",
+		"name": "polysomething",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Admin Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1027ff7d-1237-464a-80c4-a3fa8a21f934",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
+							" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+							"if (tests[\"Cookie Returned\"])",
+							"   postman.setEnvironmentVariable(\"curLogin\",",
+							"    postman.getResponseCookie(\"CHSAuth\").value)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"admin@aol.net\", \"password\": \"password\"}"
+				},
+				"url": {
+					"raw": "{{url}}/Ssns",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Ssns"
+					]
+				},
+				"description": "Good Login\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Nuke",
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/javascript"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/DB",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"DB"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c700a6d1-f257-4eb8-bc79-fa814efcf48b",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Cookie Returned\"] = postman.getResponseCookie(\"CHSAuth\")",
+							" !== null && postman.getResponseCookie(\"CHSAuth\").value !== undefined;",
+							"if (tests[\"Cookie Returned\"])",
+							"   postman.setEnvironmentVariable(\"curLogin\",",
+							"    postman.getResponseCookie(\"CHSAuth\").value)"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"email\": \"admin@aol.net\", \"password\": \"password\"}"
+				},
+				"url": {
+					"raw": "{{url}}/Ssns",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Ssns"
+					]
+				},
+				"description": "Good Login\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Admin Start Convo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7fbb06a9-3106-48b3-a1de-7cadb525b76b",
+						"exec": [
+							"tests[\"Admin Can Start Convo\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\" : \"Testing\",\n\t\"content\" : \"further tests\",\n\t\"thumbnail\" : 5,\n\t\"contributors\" : \"me, baby\",\n\t\"category\" : \"grungy anime men\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Prjs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prjs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Projects",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "62d4062d-17ce-461f-9898-60af4ad601cc",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"One Project\"] = jsonData.length === 1;",
+							"tests[\"Has ID\"] = jsonData[0].id;",
+							"postman.setEnvironmentVariable(\"prjID\", jsonData[0].id);",
+							"tests[\"Correct Title\"] = jsonData[0].title === \"Testing\";"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Prjs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prjs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Projects Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "62d4062d-17ce-461f-9898-60af4ad601cc",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Has ID\"] = jsonData.id;",
+							"postman.setEnvironmentVariable(\"prjID\", jsonData.id);",
+							"tests[\"Correct Title\"] = jsonData.title === \"Testing\";"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Prjs/{{prjID}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prjs",
+						"{{prjID}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register Student Extra Field",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3c20ab52-f006-40b6-809a-22ec2e6dc7ed",
+						"exec": [
+							"tests[\"500 error\"] = responseCode.code === 500;",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"UserB@domainB\",\n    \"password\" : \"blorp\",\n    \"alignment\" : \"chaoticNeutral\",\n    \"role\"     : 0,\n    \"handle\": \"matthew mchgonihay\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Prss",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prss"
+					]
+				},
+				"description": "Should fail trying to make admin"
+			},
+			"response": []
+		},
+		{
+			"name": "Register Student A",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "c4a777bb-3a6e-41ed-9892-12c1d33d0ecc",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"password\" : \"blorp\",\n    \"role\"     : 0,\n    \"handle\": \"Anne Hathaschway\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Prss",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prss"
+					]
+				},
+				"description": "\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Login as Student A",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "690fe4a3-d765-42ec-8faa-f7908e561a0f",
+						"exec": [
+							"var locURL = postman.getResponseHeader(\"Location\").split('/');",
+							"var cookie = postman.getResponseCookie(\"CHSAuth\");",
+							"",
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"tests[\"Cookie Returned\"] = cookie && cookie.value !== undefined;",
+							"",
+							"if (tests[\"Cookie Returned\"]) {",
+							"   postman.setEnvironmentVariable(\"curLogin\", cookie.value)",
+							"   tests[\"Cookie matches session\"] = locURL[locURL.length - 1]",
+							"    === cookie.value;",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"UserA@domainA\",\n    \"password\" : \"blorp\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Ssns",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Ssns"
+					]
+				},
+				"description": "Good Login\n"
+			},
+			"response": []
+		},
+		{
+			"name": "Student A Start Convo Too Long",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7fbb06a9-3106-48b3-a1de-7cadb525b76b",
+						"exec": [
+							"tests[\"Unauthorized Convo\"] = responseCode.code === 400;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"tests[\"Convo Title too long\"] = jsonData[0].tag === \"badValue\" && jsonData[0].params[0] === \"title\";"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\" : \"This better not work....... I'm writing far too much. No way in heck this is less than 80 characters or my name isn't Linn Rising\",\n\t\"content\" : \"something\",\n\t\"thumbnail\" : \"blob\",\n\t\"category\" : \"heck\",\n\t\"contributors\" : \"nada\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Prjs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prjs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Student A Start Convo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7fbb06a9-3106-48b3-a1de-7cadb525b76b",
+						"exec": [
+							"tests[\"Starting Convo...\"] = responseCode.code === 200;"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"name": "Content-Type",
+						"type": "text",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"title\" : \"Human Music\",\n\t\"content\" : \"sick beats\",\n\t\"thumbnail\" : \"blob\",\n\t\"contributors\" : \"me, myself, and I\",\n\t\"category\" : \"i Lambda Walrus\"\n}"
+				},
+				"url": {
+					"raw": "{{url}}/Prjs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prjs"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Projects Copy",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "62d4062d-17ce-461f-9898-60af4ad601cc",
+						"exec": [
+							"tests[\"Status code is 200\"] = responseCode.code === 200;",
+							"",
+							"var jsonData = JSON.parse(responseBody);",
+							"",
+							"tests[\"Two Projects\"] = jsonData.length === 2;",
+							"if(jsonData[0].id === parseInt(postman.getEnvironmentVariable(\"prjID\"))) {",
+							"    tests[\"Correct Times\"] = jsonData[0].timePosted < jsonData[1].timePosted;",
+							"}",
+							"else {",
+							"    tests[\"Correct Times\"] = jsonData[1].timePosted < jsonData[0].timePosted;",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/Prjs",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"Prjs"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
