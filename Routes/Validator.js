@@ -88,6 +88,18 @@ Validator.prototype.hasFields = function(obj, fieldList, cb) {
 
    return this.check(true, null, null, cb);
 };
+
+Validator.prototype.isEmpty = function(obj, cb) {
+   var self = this;
+   var keys = Object.keys(obj);
+   
+   keys.forEach(function(name) {
+      self.errors.push({tag: Validator.Tags.forbiddenField, params: [name]});
+   });
+
+   return this.check(true, null, null, cb);
+}
+
 isNotEmpty = function(data){
    return data !== null && data !== ''
 }
