@@ -7,7 +7,7 @@ var kMaxTitleLen = 80;
 var kMaxContentLen = 10000;
 var kMaxContributorsLen = 200;
 var kMaxCategoryLen = 30;
-router.baseURL = '/Prjs';
+router.baseURL = '/REST/Prjs';
 
 // optional params timePosted and category
 router.get('/', function(req, res) {

@@ -17,7 +17,7 @@ create table Project (
    title varchar(80) not null,
    content varchar(10000) not null,
    thumbnail blob(65535) not null,
-   contributors varchar(200) not null,
+   contributors varchar(200),
    category varchar(30) not null,
    timePosted bigInt not null,
    constraint FKMessage_ownerId foreign key (ownerId) references Person(id)
@@ -29,6 +29,7 @@ create table Comment (
    prjId int not null,
    prsId int not null,
    content varchar(1000) not null,
+   whenMade bigint not null,
    constraint FKMessage_prjId foreign key (prjId) references Project(id)
     on delete cascade,
    constraint FKMessage_prsId foreign key (prsId) references Person(id)
