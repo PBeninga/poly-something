@@ -10,7 +10,7 @@ var fs = require('fs')
 
 var app = express();
 var port = 3000;
-if(process.argv.indexOf("-p") != -1){ //does our flag exist?
+if (process.argv.indexOf("-p") != -1) { //does our flag exist?
    port = parseInt(process.argv[process.argv.indexOf("-p") + 1]); //grab the next item
 }
 //app.use(function(req, res, next) {console.log("Hello"); next();});
