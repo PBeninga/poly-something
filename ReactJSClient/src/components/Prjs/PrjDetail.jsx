@@ -19,6 +19,7 @@ export default class PrjDetail extends Component {
 
       this.props.getPrj(prjId);
       this.props.getCmts(prjId);
+      this.props.getLik(prjId);
 
       this.openModal = this.openModal.bind(this)
    }
@@ -36,8 +37,12 @@ export default class PrjDetail extends Component {
       this.setState({ showModal: false});
    }
 
-   like = (prj) => {
-
+   toggleLike = (prj) => {
+      if (this.props.Liks.length === 0) {
+         this.props.addLik(prj.id);
+      } else {
+         this.props.removeLik(prj.id);
+      }
    }
 
    render() {
@@ -98,8 +103,8 @@ export default class PrjDetail extends Component {
             </p>
             <hr/>
             <ButtonGroup className="button-group">
-               <Button bsStyle="primary" className="button">
-                  {`Like (${prj.numLikes})`}
+               <Button bsStyle="primary" className="button" onClick={() => this.toggleLike(prj)}>
+                  {`${this.props.Liks.length ? "Unlike" : "Like"} (${prj.numLikes})`}
                </Button>
                <Button bsStyle="primary" className="button" onClick={this.openModal}>
                   Leave a Comment
