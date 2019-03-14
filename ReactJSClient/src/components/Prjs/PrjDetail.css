@@ -1,0 +1,13 @@
+.project-image {
+    width: 256px;
+    padding: 0 10px 10px 0;
+}
+
+.project-detail {
+    font-weight: bold;
+    padding: 0 1em 0px 0px;
+}
+
+.button-group {
+    margin: 0px 0px 10px 0px;
+}

@@ -69,6 +69,15 @@ export function addPrj(newPrj, cb) {
    };
 }
 
+export function getPrj(id, cb) {
+   return (dispatch, prevState) => {
+      api.getPrj(id)
+      .then(prjRsp => dispatch({type: 'GET_PRJ', prj: prjRsp}))
+      .then(() => {if (cb) cb();})
+      .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
+   }
+}
+
 export function delPrj(id, cb) {
    return (dispatch, prevState) => {
       api.deletePrj(id)

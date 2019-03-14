@@ -17,7 +17,8 @@ var Prjs =  function(state = [], action) {
             val : Object.assign({}, val, { title: action.data.title }));
       case 'ADD_PRJ':
          return state.concat([action.prj]);
-
+      case 'GET_PRJ':
+         return [action.prj];
       default:
          return state;
    }

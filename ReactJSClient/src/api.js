@@ -142,6 +142,11 @@ export function getPrjs(userId) {
     .then((res) => res.json())
 }
 
+export function getPrj(id) {
+    return get(`Prjs/${id}`)
+    .then(rsp => rsp.json());
+}
+
 export function putPrj(id, body) {
     console.log(id + " " + JSON.stringify(body))
     return put(`Prjs/${id}`, body)
