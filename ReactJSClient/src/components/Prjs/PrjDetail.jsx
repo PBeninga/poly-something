@@ -26,7 +26,9 @@ export default class PrjDetail extends Component {
       this.state = {
          showModal: false,
          showConfirmation: false,
-         editing: !projectExists
+         editing: !projectExists,
+         thumbnailError: false,
+         defaultThumbnail: require('../../images/Project.png')
       }
 
       this.openModal = this.openModal.bind(this);
@@ -61,6 +63,7 @@ export default class PrjDetail extends Component {
             contributors,
             category,
             content,
+            thumbnail
          } = this.state;
 
          const body = {
@@ -68,11 +71,12 @@ export default class PrjDetail extends Component {
             contributors,
             category,
             content,
-            thumbnail: "none"
+            thumbnail
          };
 
          if (prj.id) {
-            this.props.modPrj(prj.id, body);
+            this.props.modPrj(prj.id, body, () =>
+             this.setState({thumbnailError: false}));
          } else {
             this.props.addPrj(body, () => {
                var prjId = this.props.Prjs[0].id;
@@ -132,8 +136,16 @@ export default class PrjDetail extends Component {
             <Flexbox.Grid fluid>
                <Flexbox.Row>
                   <Flexbox.Col>
-                     <img src={ require('../../images/Project.png') }
-                          className="project-image"/>
+                     <img src={ this.state.thumbnailError ? this.state.defaultThumbnail :
+                        prj.thumbnail || this.state.defaultThumbnail}
+                        className="project-image"
+                        onError={() => this.setState({thumbnailError: true})} />
+                     {this.state.editing ?
+                     <div>
+                        <span className="project-detail">Thmbnail:</span>
+                     </div>
+                     : ''}
+                     {this.createEditField("thumbnail", '')}
                   </Flexbox.Col>
                   <Flexbox.Col xs={6} >
                      <Flexbox.Row>
