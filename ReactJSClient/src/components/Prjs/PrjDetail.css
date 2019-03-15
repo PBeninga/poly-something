@@ -15,3 +15,7 @@
 .button-group {
     margin: 0px 0px 10px 0px;
 }
+
+.content {
+    white-space: pre-wrap;
+}

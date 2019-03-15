@@ -60,10 +60,16 @@ export function updatePrjs(userId, cb) {
    };
 }
 
+export function clearPrjs() {
+   return (dispatch, prevState) => {
+      dispatch({ type: 'CLEAR_PRJS' });
+   }
+}
+
 export function addPrj(newPrj, cb) {
    return (dispatch, prevState) => {
       api.postPrj(newPrj)
-      .then(prjRsp => dispatch({type: 'ADD_PRJ', prj: newPrj}))
+      .then(prjRsp => dispatch({type: 'ADD_PRJ', prj: prjRsp}))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };

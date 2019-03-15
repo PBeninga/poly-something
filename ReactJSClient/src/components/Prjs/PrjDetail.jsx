@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Redirect } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Col, Row, Button, Form,
    Alert, ButtonGroup, FormControl, Glyphicon } from 'react-bootstrap';
 import * as Flexbox from 'react-flexbox-grid'
@@ -10,17 +10,24 @@ import './PrjDetail.css';
 export default class PrjDetail extends Component {
    constructor(props) {
       super(props);
-      var prjId = parseInt(window.location.pathname.split("/")[2]);
+
+      var path = window.location.pathname.split("/");
+      var projectExists = path.length === 3;
+
+      if (projectExists) {
+         var prjId = parseInt(window.location.pathname.split("/")[2]);
+         this.props.getPrj(prjId);
+         this.props.getCmts(prjId);
+         this.props.getLik(prjId);
+      } else {
+         this.props.clearPrjs();
+      }
 
       this.state = {
          showModal: false,
          showConfirmation: false,
-         editing: false
+         editing: !projectExists
       }
-
-      this.props.getPrj(prjId);
-      this.props.getCmts(prjId);
-      this.props.getLik(prjId);
 
       this.openModal = this.openModal.bind(this);
       this.toggleEdit = this.toggleEdit.bind(this);
@@ -53,17 +60,27 @@ export default class PrjDetail extends Component {
             title,
             contributors,
             category,
-            content
+            content,
          } = this.state;
 
          const body = {
             title,
             contributors,
             category,
-            content
+            content,
+            thumbnail: "none"
          };
 
-         this.props.modPrj(prj.id, body);
+         if (prj.id) {
+            this.props.modPrj(prj.id, body);
+         } else {
+            this.props.addPrj(body, () => {
+               var prjId = this.props.Prjs[0].id;
+               this.props.history.push(`/PrjDetail/${prjId}`);
+               this.props.getCmts(prjId);
+               this.props.getLik(prjId);
+            });
+         }
 
          this.setState({editing: false});
       } else {
@@ -85,10 +102,17 @@ export default class PrjDetail extends Component {
    }
 
    render() {
-      if (this.props.Prjs.length > 1)
+      if (this.props.Prjs.length > 1 && !this.state.editing)
          return null;
       
-      var prj = this.props.Prjs[0];
+      var prj = this.props.Prjs[0] || {
+         // Create default values if we're making a new project
+         title: "",
+         category: "",
+         contributors: "",
+         content: "",
+         thumbnail: ""
+      };
 
       var prjItems = [];
       if(this.props.Cmts.forEach){
@@ -111,7 +135,7 @@ export default class PrjDetail extends Component {
                      <img src={ require('../../images/Project.png') }
                           className="project-image"/>
                   </Flexbox.Col>
-                  <Flexbox.Col xs={6}>
+                  <Flexbox.Col xs={6} >
                      <Flexbox.Row>
                         {this.state.editing ?
                         <span className="project-detail">Title:</span>
@@ -127,6 +151,7 @@ export default class PrjDetail extends Component {
                         <span className="project-detail">Category:</span>
                         {this.createEditField("category", prj.category)}
                      </Flexbox.Row>
+                     {this.state.editing ? '' :
                      <Flexbox.Row>
                         <span className="project-detail">Date posted:</span>
                         {new Intl.DateTimeFormat('us',
@@ -135,9 +160,9 @@ export default class PrjDetail extends Component {
                            hour: "2-digit", minute: "2-digit", second: "2-digit"
                         })
                         .format(prj.timePosted)}
-                     </Flexbox.Row>
+                     </Flexbox.Row>}
                   </Flexbox.Col>
-                  {this.props.Prss.id === prj.ownerId ?
+                  {this.props.Prss.id === prj.ownerId || prj.ownerId === undefined ?
                   <Flexbox.Col xs className="edit-button">
                      <Button bsStyle="primary" onClick={() => this.toggleEdit(prj)}>
                         {this.state.editing ? "Save" : "Edit"}
@@ -148,9 +173,7 @@ export default class PrjDetail extends Component {
             </Flexbox.Grid>
             <hr/>
             <h3>Description</h3>
-            <p>
-               {this.createEditField("content", prj.content, "multiline")}
-            </p>
+            {this.createEditField("content", <div className="content">{prj.content}</div>, "multiline")}
             {this.state.editing ? '' :
             <div>
                <hr/>

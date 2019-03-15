@@ -5,6 +5,8 @@ var Prjs =  function(state = [], action) {
       case 'UPDATE_PRJS': // Replace previous cnvs
          console.log("Updating: " + JSON.stringify(action))
          return action.prjs;
+      case 'CLEAR_PRJS':
+         return [];
       case 'UPDATE_PRJ':
          /* Example of wrongness
         state.forEach(val => {
