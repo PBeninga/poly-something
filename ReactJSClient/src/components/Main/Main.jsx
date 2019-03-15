@@ -87,7 +87,7 @@ class Main extends Component {
                <Route path='/signin' render={() => <SignIn {...this.props} />} />
                <Route path='/register'
                 render={() => <Register {...this.props} />} />
-               <ProtectedRoute path='/allPrjs' component={PrjOverview}
+               <Route path='/allPrjs' component={PrjOverview}
                 {...this.props}/>
                <ProtectedRoute path='/myPrjs' component={PrjOverview}
                 userOnly="true" {...this.props}/>

@@ -9,10 +9,12 @@ import './PrjOverview.css';
 export default class PrjOverview extends Component {
    constructor(props) {
       super(props);
-      this.props.updatePrjs();
+      //this.props.updatePrjs();
       this.state = {
          showModal: false,
          showConfirmation: false,
+         tags : ["music", "art", "programming", "charity"],
+         selectedTags: []
       }
       this.openModal = this.openModal.bind(this)
       this.callEditPrj = this.callEditPrj.bind(this)
@@ -61,23 +63,42 @@ export default class PrjOverview extends Component {
 
    render() {
       var prjItems = [];
-
-      this.props.Prjs.forEach(prj => {
-         if (!this.props.userOnly || this.props.Prss.id === prj.ownerId)
-            prjItems.push(<PrjItem
-               key={prj.id}
-               prj={prj}
-               showControls={prj.ownerId === this.props.Prss.id}
-               onDelete={() => this.openConfirmation(prj)}
-               onEdit={() => this.callEditPrj(prj)} />);
-      });
+      
+      // this.props.Prjs.forEach(prj => {
+      //    if (!this.props.userOnly || this.props.Prss.id === prj.ownerId)
+      //       prjItems.push(<PrjItem
+      //          key={prj.id}
+      //          prj={prj}
+      //          showControls={prj.ownerId === this.props.Prss.id}
+      //          onDelete={() => this.openConfirmation(prj)}
+      //          onEdit={() => this.callEditPrj(prj)} />);
+      // });
 
       return (
-         <section className="container">
+         <section>
             <h1>Prj Overview</h1>
-            <ListGroup>
-               {prjItems}
-            </ListGroup>
+            <div className="grid-container">
+               <div className="side-menu"><PrjMenu tags={this.state.tags}/></div>
+               <div className="grid-content inner-grid-container">
+                    <PrjItem />
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+                  <div className="grid-item">hi</div>
+               </div> 
+               <div className="grid-footer">Footer</div>
+             </div>
             <Button bsStyle="primary" onClick={this.openModal}>
                New Conversation
             </Button>
@@ -104,27 +125,35 @@ export default class PrjOverview extends Component {
       )
    }
 }
-
+const PrjMenu = function (props) {
+   console.log("HERE:"+JSON.stringify(props))
+   var tags = [];
+   for(var i = 0; i < props.tags.length; i++){
+      tags.push(<div className="text-attrs"><Row><input
+      name= {props.tags[i]}
+      type="checkbox" /> {props.tags[i]}</Row></div>)
+   }
+   return (<div>{tags}</div>)
+}
 // A Prj list item
 const PrjItem = function (props) {
    console.log("HERE:"+JSON.stringify(props))
-   return (
-      <ListGroupItem>
-         <Row>
-            <Col sm={4}><Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link></Col>
-            <Col sm={4}>{props.prj.lastMessage ? new Intl.DateTimeFormat('us',
-               {
-                  year: "numeric", month: "short", day: "numeric",
-                  hour: "2-digit", minute: "2-digit", second: "2-digit"
-               })
-               .format(props.prj.lastMessage) : "N/A"}</Col>
-            {props.showControls ?
-               <div className="pull-right">
-                  <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
-                  <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
-               </div>
-               : ''}
-         </Row>
-      </ListGroupItem>
-   )
+   return (<div className="grid-item"> <Link to={"/PrjDetail/" + 1}>a project</Link> </div>)
+      // <ListGroupItem>
+      //    <Row>
+      //       <Col sm={4}><Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link></Col>
+      //       <Col sm={4}>{props.prj.lastMessage ? new Intl.DateTimeFormat('us',
+      //          {
+      //             year: "numeric", month: "short", day: "numeric",
+      //             hour: "2-digit", minute: "2-digit", second: "2-digit"
+      //          })
+      //          .format(props.prj.lastMessage) : "N/A"}</Col>
+      //       {props.showControls ?
+      //          <div className="pull-right">
+      //             <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
+      //             <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
+      //          </div>
+      //          : ''}
+      //    </Row>
+      // </ListGroupItem>
 }
