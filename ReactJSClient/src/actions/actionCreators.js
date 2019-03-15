@@ -87,10 +87,10 @@ export function delPrj(id, cb) {
    };
 }
 
-export function modPrj(prjId, title, cb) {
+export function modPrj(prjId, body, cb) {
    return (dispatch, prevState) => {
-      api.putPrj(prjId, {title})
-      .then((prjs) => dispatch({type: 'UPDATE_PRJ', data:{title, id:prjId}}))
+      api.putPrj(prjId, body)
+      .then((prjs) => dispatch({type: 'UPDATE_PRJ', data:{id:prjId, body}}))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };

@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Col, Row, Button, Form,
-   Alert, ButtonGroup, Glyphicon } from 'react-bootstrap';
+   Alert, ButtonGroup, FormControl, Glyphicon } from 'react-bootstrap';
 import * as Flexbox from 'react-flexbox-grid'
 import CmtModal from './CmtModal';
 import './PrjOverview.css';
@@ -14,14 +14,16 @@ export default class PrjDetail extends Component {
 
       this.state = {
          showModal: false,
-         showConfirmation: false
+         showConfirmation: false,
+         editing: false
       }
 
       this.props.getPrj(prjId);
       this.props.getCmts(prjId);
       this.props.getLik(prjId);
 
-      this.openModal = this.openModal.bind(this)
+      this.openModal = this.openModal.bind(this);
+      this.toggleEdit = this.toggleEdit.bind(this);
    }
 
    openModal = (prj) => {
@@ -43,6 +45,43 @@ export default class PrjDetail extends Component {
       } else {
          this.props.removeLik(prj.id);
       }
+   }
+
+   toggleEdit = (prj) => {
+      if (this.state.editing) {
+         let {
+            title,
+            contributors,
+            category,
+            content
+         } = this.state;
+
+         const body = {
+            title,
+            contributors,
+            category,
+            content
+         };
+
+         this.props.modPrj(prj.id, body);
+
+         this.setState({editing: false});
+      } else {
+         this.setState({...prj, editing: true});
+      }
+   }
+
+   createEditField = (fieldName, displayContent, editType) => {
+      return (<EditField
+               editing={this.state.editing}
+               editValue={this.state[fieldName]}
+               displayContent={displayContent}
+               editType={editType}
+               handleChange={e => {
+                  var newState = {};
+                  newState[fieldName] = e.target.value;
+                  this.setState(newState);
+               }}/>);
    }
 
    render() {
@@ -69,15 +108,24 @@ export default class PrjDetail extends Component {
             <Flexbox.Grid fluid>
                <Flexbox.Row>
                   <Flexbox.Col>
-                     <img src={ require('../../images/Project.png') } className="project-image"/>
+                     <img src={ require('../../images/Project.png') }
+                          className="project-image"/>
                   </Flexbox.Col>
                   <Flexbox.Col xs={6}>
                      <Flexbox.Row>
-                        <h1>{prj.title}</h1>
+                        {this.state.editing ?
+                        <span className="project-detail">Title:</span>
+                        : ''}
+                        {this.createEditField("title", <h1>{prj.title}</h1>)}
                      </Flexbox.Row>
+                     {prj.contributors || this.state.editing ?
+                     <Flexbox.Row>
+                        <span className="project-detail">By:</span>
+                        {this.createEditField("contributors", prj.contributors)}
+                     </Flexbox.Row> : '' }
                      <Flexbox.Row>
                         <span className="project-detail">Category:</span>
-                        {prj.category}
+                        {this.createEditField("category", prj.category)}
                      </Flexbox.Row>
                      <Flexbox.Row>
                         <span className="project-detail">Date posted:</span>
@@ -88,37 +136,41 @@ export default class PrjDetail extends Component {
                         })
                         .format(prj.timePosted)}
                      </Flexbox.Row>
-                     {prj.contributors ?
-                     <Flexbox.Row>
-                        <span className="project-detail">By:</span>
-                        {prj.contributors}
-                     </Flexbox.Row> : '' }
                   </Flexbox.Col>
+                  {this.props.Prss.id === prj.ownerId ?
+                  <Flexbox.Col xs className="edit-button">
+                     <Button bsStyle="primary" onClick={() => this.toggleEdit(prj)}>
+                        {this.state.editing ? "Save" : "Edit"}
+                     </Button>
+                  </Flexbox.Col>
+                  : '' }
                </Flexbox.Row>
             </Flexbox.Grid>
             <hr/>
             <h3>Description</h3>
             <p>
-               {prj.content}
+               {this.createEditField("content", prj.content, "multiline")}
             </p>
-            <hr/>
-            <ButtonGroup className="button-group">
-               <Button bsStyle="primary" className="button" onClick={() => this.toggleLike(prj)}>
-                  {`${this.props.Liks.length ? "Unlike" : "Like"} (${prj.numLikes})`}
-               </Button>
-               <Button bsStyle="primary" className="button" onClick={this.openModal}>
-                  Leave a Comment
-               </Button>
-            </ButtonGroup>
-            <ListGroup>
-               {prjItems}
-            </ListGroup>
-            {/* Modal for creating and change prj */}
-            <CmtModal
-               showModal={this.state.showModal}
-               title={"New Message"}
-               prjId={prj.id}
-               onDismiss={(result) => this.modalDismiss(result, prj)} />
+            {this.state.editing ? '' :
+            <div>
+               <hr/>
+               <ButtonGroup className="button-group">
+                  <Button bsStyle="primary" onClick={() => this.toggleLike(prj)}>
+                     {`${this.props.Liks.length ? "Unlike" : "Like"} (${prj.numLikes})`}
+                  </Button>
+                  <Button bsStyle="primary" onClick={this.openModal}>
+                     Leave a Comment
+                  </Button>
+               </ButtonGroup>
+               <ListGroup>
+                  {prjItems}
+               </ListGroup>
+               <CmtModal
+                  showModal={this.state.showModal}
+                  title={"New Message"}
+                  prjId={prj.id}
+                  onDismiss={(result) => this.modalDismiss(result, prj)} />
+            </div>}
          </section>
       )
    }
@@ -140,4 +192,33 @@ const PrjItem = function (props) {
          <Row><Col sm={4}>{props.cmt.content}</Col></Row>
       </ListGroupItem>
    )
+}
+
+const EditField = function(props) {
+   var editView;
+
+   if (props.editing) {
+      switch (props.editType) {
+         case "multiline":
+            editView = <FormControl
+               componentClass="textarea"
+               value={props.editValue}
+               placeholder={props.prjValue}
+               onChange={props.handleChange}
+            />
+            break;
+         default:
+            editView = <FormControl
+               type="text"
+               value={props.editValue}
+               placeholder={props.prjValue}
+               onChange={props.handleChange}
+            />
+            break;
+      }
+   }
+
+   return (
+      <div>{ props.editing ? editView : props.displayContent }</div>
+   );
 }

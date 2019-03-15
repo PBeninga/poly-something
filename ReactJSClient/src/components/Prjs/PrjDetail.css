@@ -5,7 +5,11 @@
 
 .project-detail {
     font-weight: bold;
-    padding: 0 1em 0px 0px;
+    padding: 0 0.25em 0px 0px;
+}
+
+.edit-button {
+    direction: rtl;
 }
 
 .button-group {

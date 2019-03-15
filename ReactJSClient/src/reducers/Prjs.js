@@ -14,7 +14,7 @@ var Prjs =  function(state = [], action) {
         return state;*/
         console.log(action)
          return state.map(val => val.id !== action.data.id ?
-            val : Object.assign({}, val, { title: action.data.title }));
+            val : Object.assign({}, val, { ...action.data.body }));
       case 'ADD_PRJ':
          return state.concat([action.prj]);
       case 'GET_PRJ':
