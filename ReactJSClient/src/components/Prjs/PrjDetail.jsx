@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Col, Row, Button, Form,
    Alert, ButtonGroup, FormControl, Glyphicon } from 'react-bootstrap';
+import Combobox from 'react-widgets/lib/Combobox';
 import * as Flexbox from 'react-flexbox-grid'
 import CmtModal from './CmtModal';
 import './PrjOverview.css';
@@ -98,9 +99,9 @@ export default class PrjDetail extends Component {
                editValue={this.state[fieldName]}
                displayContent={displayContent}
                editType={editType}
-               handleChange={e => {
+               handleChange={value => {
                   var newState = {};
-                  newState[fieldName] = e.target.value;
+                  newState[fieldName] = value;
                   this.setState(newState);
                }}/>);
    }
@@ -161,7 +162,7 @@ export default class PrjDetail extends Component {
                      </Flexbox.Row> : '' }
                      <Flexbox.Row>
                         <span className="project-detail">Category:</span>
-                        {this.createEditField("category", prj.category)}
+                        {this.createEditField("category", prj.category, "category")}
                      </Flexbox.Row>
                      {this.state.editing ? '' :
                      <Flexbox.Row>
@@ -247,12 +248,20 @@ const EditField = function(props) {
                onChange={props.handleChange}
             />
             break;
+         case "category":
+            let categories = ['Games', 'Music', 'Essays'];
+            editView = <Combobox
+               data={categories}
+               defaultValue={"Games"}
+               onChange={value => props.handleChange(value)}
+               />
+            break;
          default:
             editView = <FormControl
                type="text"
                value={props.editValue}
                placeholder={props.prjValue}
-               onChange={props.handleChange}
+               onChange={e => props.handleChange(e.target.value)}
             />
             break;
       }
