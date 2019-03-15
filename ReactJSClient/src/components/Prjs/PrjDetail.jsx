@@ -71,7 +71,7 @@ export default class PrjDetail extends Component {
             contributors,
             category,
             content,
-            thumbnail
+            thumbnail: thumbnail || "none"
          };
 
          if (prj.id) {
@@ -176,7 +176,10 @@ export default class PrjDetail extends Component {
                   </Flexbox.Col>
                   {this.props.Prss.id === prj.ownerId || prj.ownerId === undefined ?
                   <Flexbox.Col xs className="edit-button">
-                     <Button bsStyle="primary" onClick={() => this.toggleEdit(prj)}>
+                     <Button bsStyle="primary" onClick={() => this.toggleEdit(prj)}
+                             disabled={this.state.editing && !(this.state.title &&
+                             this.state.category && this.state.contributors &&
+                             this.state.content)}>
                         {this.state.editing ? "Save" : "Edit"}
                      </Button>
                   </Flexbox.Col>
@@ -185,7 +188,9 @@ export default class PrjDetail extends Component {
             </Flexbox.Grid>
             <hr/>
             <h3>Description</h3>
-            {this.createEditField("content", <div className="content">{prj.content}</div>, "multiline")}
+            {this.createEditField("content", <div className="content">
+               {prj.content}
+            </div>, "multiline")}
             {this.state.editing ? '' :
             <div>
                <hr/>
