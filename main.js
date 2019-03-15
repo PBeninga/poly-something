@@ -21,9 +21,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use(function(req, res, next) {
    // 2 more access control
    console.log("Handling " + req.path + '/' + req.method);
-   res.header("Access-Control-Allow-Origin", "http://localhost:"+port);
+   res.header("Access-Control-Allow-Origin", "http://localhost:3000");
+   res.header("Access-Control-Expose-Headers", "Location");
    res.header("Access-Control-Allow-Credentials", true);
    res.header("Access-Control-Allow-Headers", "Content-Type");
+   res.header("Access-Control-Allow-Methods", "PUT, POST, GET, DELETE");
   next();
 });
 

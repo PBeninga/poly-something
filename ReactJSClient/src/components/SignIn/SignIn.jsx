@@ -20,7 +20,7 @@ class SignIn extends Component {
 
    // Call redux actionCreator signin via props.
    signIn(event) {
-      this.props.signIn(this.state, () => this.props.history.push("/allCnvs"));
+      this.props.signIn(this.state, () => this.props.history.push("/allPrjs"));
       event.preventDefault()
    }
 

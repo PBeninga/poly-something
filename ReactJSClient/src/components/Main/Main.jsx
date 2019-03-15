@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Register, SignIn, CnvOverview, CnvDetail, ConfDialog } from '../index'
+import { Register, SignIn, PrjOverview, PrjDetail, ConfDialog } from '../index'
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
@@ -20,7 +20,6 @@ class Main extends Component {
    modalDismiss(){
       this.props.clearErrors()
    }
-
 
    // Function component to generate a Route tag with a render method 
    // conditional on login.  Params {conditional: Cmp to render if signed in}
@@ -47,11 +46,11 @@ class Main extends Component {
                      <Nav>
                         {this.signedIn() ?
                            [
-                              <LinkContainer key={"all"} to="/allCnvs">
-                                 <NavItem>All Conversations</NavItem>
+                              <LinkContainer key={"all"} to="/allPrjs">
+                                 <NavItem>All Projects</NavItem>
                               </LinkContainer>,
-                              <LinkContainer key={"my"} to="/myCnvs">
-                                 <NavItem>My Conversations</NavItem>
+                              <LinkContainer key={"my"} to="/myPrjs">
+                                 <NavItem>My Projects</NavItem>
                               </LinkContainer>
                            ]
                            :
@@ -84,15 +83,15 @@ class Main extends Component {
             {/*Alternate pages beneath navbar, based on current route*/}
             <Switch>
                <Route exact path='/'
-                  component={() => this.props.Prss ? <Redirect to="/allCnvs" /> : <Redirect to="/signin" />} />
+                  component={() => this.props.Prss ? <Redirect to="/allPrjs" /> : <Redirect to="/signin" />} />
                <Route path='/signin' render={() => <SignIn {...this.props} />} />
                <Route path='/register'
                 render={() => <Register {...this.props} />} />
-               <ProtectedRoute path='/allCnvs' component={CnvOverview}
+               <ProtectedRoute path='/allPrjs' component={PrjOverview}
                 {...this.props}/>
-               <ProtectedRoute path='/myCnvs' component={CnvOverview}
+               <ProtectedRoute path='/myPrjs' component={PrjOverview}
                 userOnly="true" {...this.props}/>
-                <ProtectedRoute path='/CnvDetail' component={CnvDetail}
+                <ProtectedRoute path='/PrjDetail' component={PrjDetail}
                 userOnly="true" {...this.props}/>}
                />
              

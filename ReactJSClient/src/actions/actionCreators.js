@@ -8,30 +8,32 @@ export function signIn(credentials, cb) {
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
 }
+
 export function clearErrors(){
    return (dispatch, prevState)=>{
       dispatch({type:'CLEAR_ERR'});
    }
 }
-export function getMsgs(id, cb){
+
+export function getCmts(id, cb){
    return (dispatch, prevState) => {
-      api.getMsgs(id)
-         .then((msgs) => dispatch({type:'UPDATE_MSGS', msgs:msgs}))
+      api.getCmts(id)
+         .then((cmts) => dispatch({type: 'UPDATE_CMTS', cmts}))
          .then(() => {if (cb) cb();})
          .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
 }
-export function newMsg(cnvId, msg, cb){
+
+export function newCmt(prjId, cmt, cb){
    return (dispatch, prevState) => {
-   api.sendMsg(cnvId, msg)
-      .then(api.getMsgs(cnvId)
-      .then((msgs) => dispatch({type:'UPDATE_MSGS', msgs:msgs})))
+   api.postCmt(prjId, cmt)
+      .then(api.getCmts(prjId)
+      .then((cmts) => dispatch({type: 'UPDATE_CMTS', cmts})))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
-
    };
-   
 }
+
 export function signOut(cb) {
    return (dispatch, prevState) => {
       api.signOut()
@@ -49,37 +51,37 @@ export function register(data, cb) {
    };
 }
 
-export function updateCnvs(userId, cb) {
+export function updatePrjs(userId, cb) {
    return (dispatch, prevState) => {
-      api.getCnvs(userId)
-      .then((cnvs) => {console.log("here: "+JSON.stringify(cnvs)); return dispatch({ type: 'UPDATE_CNVS', cnvs })})
+      api.getPrjs(userId)
+      .then((prjs) => {console.log("here: "+JSON.stringify(prjs)); return dispatch({ type: 'UPDATE_PRJS', prjs })})
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
 }
 
-export function addCnv(newCnv, cb) {
+export function addPrj(newPrj, cb) {
    return (dispatch, prevState) => {
-      api.postCnv(newCnv)
-      .then(cnvRsp => dispatch({type: 'ADD_CNV', cnv: newCnv}))
+      api.postPrj(newPrj)
+      .then(prjRsp => dispatch({type: 'ADD_PRJ', prj: newPrj}))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
 }
-export function delCnv(id, cb) {
+
+export function delPrj(id, cb) {
    return (dispatch, prevState) => {
-      api.deleteCnv(id)
-      .then(console.log("deleted cnv"))
+      api.deletePrj(id)
+      .then(console.log("deleted prj"))
       .then(() =>{if(cb) cb()})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
 }
 
-
-export function modCnv(cnvId, title, cb) {
+export function modPrj(prjId, title, cb) {
    return (dispatch, prevState) => {
-      api.putCnv(cnvId, {"title":title})
-      .then((cnvs) => dispatch({type: 'UPDATE_CNV', data:{title:title, id:cnvId}}))
+      api.putPrj(prjId, {title})
+      .then((prjs) => dispatch({type: 'UPDATE_PRJ', data:{title, id:prjId}}))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
