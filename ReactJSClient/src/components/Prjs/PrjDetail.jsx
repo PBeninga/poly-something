@@ -245,14 +245,14 @@ const EditField = function(props) {
                componentClass="textarea"
                value={props.editValue}
                placeholder={props.prjValue}
-               onChange={props.handleChange}
+               onChange={e => props.handleChange(e.target.value)}
             />
             break;
          case "category":
             let categories = ['Games', 'Music', 'Essays'];
             editView = <Combobox
                data={categories}
-               defaultValue={"Games"}
+               defaultValue={props.editValue}
                onChange={value => props.handleChange(value)}
                />
             break;
