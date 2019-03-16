@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Col, Row, Button, Glyphicon } from 'react-bootstrap';
 import PrjModal from './PrjModal';
 import { ConfDialog } from '../index';
+import { LinkContainer } from 'react-router-bootstrap';
 import { delPrj} from '../../api';
 import './PrjOverview.css';
 
@@ -78,9 +79,14 @@ export default class PrjOverview extends Component {
             <ListGroup>
                {prjItems}
             </ListGroup>
-            <Button bsStyle="primary" onClick={this.openModal}>
+            <LinkContainer key={"all"} to="/newPrj">
+               <Button bsStyle="primary"> {/*onClick={this.openModal}>*/}
+                  New Project
+               </Button>
+            </LinkContainer>
+            {/* <Button bsStyle="primary" onClick={this.openModal}>
                New Conversation
-            </Button>
+            </Button> */}
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}

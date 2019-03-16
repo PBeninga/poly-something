@@ -16,7 +16,7 @@ create table Project (
    ownerId int,
    title varchar(80) not null,
    content varchar(10000) not null,
-   thumbnail blob(65535) not null,
+   thumbnail varchar(200) not null,
    contributors varchar(200) default "",
    category varchar(30) not null,
    timePosted bigInt not null,
