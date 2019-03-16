@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Col, Row, Button, Form,
    Alert, ButtonGroup, FormControl, Glyphicon } from 'react-bootstrap';
-import Combobox from 'react-widgets/lib/Combobox';
+import Select from 'react-select';
 import * as Flexbox from 'react-flexbox-grid'
 import CmtModal from './CmtModal';
 import './PrjOverview.css';
@@ -137,10 +137,11 @@ export default class PrjDetail extends Component {
             <Flexbox.Grid fluid>
                <Flexbox.Row>
                   <Flexbox.Col>
-                     <img src={ this.state.thumbnailError ? this.state.defaultThumbnail :
-                        prj.thumbnail || this.state.defaultThumbnail}
-                        className="project-image"
-                        onError={() => this.setState({thumbnailError: true})} />
+                     <img src={this.state.thumbnailError ?
+                      this.state.defaultThumbnail :
+                      prj.thumbnail || this.state.defaultThumbnail}
+                      className="project-image"
+                      onError={() => this.setState({thumbnailError: true})} />
                      {this.state.editing ?
                      <div>
                         <span className="project-detail">Thmbnail:</span>
@@ -160,9 +161,10 @@ export default class PrjDetail extends Component {
                         <span className="project-detail">By:</span>
                         {this.createEditField("contributors", prj.contributors)}
                      </Flexbox.Row> : '' }
-                     <Flexbox.Row>
+                     <Flexbox.Row xs>
                         <span className="project-detail">Category:</span>
-                        {this.createEditField("category", prj.category, "category")}
+                        {this.createEditField("category", prj.category,
+                         "category")}
                      </Flexbox.Row>
                      {this.state.editing ? '' :
                      <Flexbox.Row>
@@ -175,12 +177,15 @@ export default class PrjDetail extends Component {
                         .format(prj.timePosted)}
                      </Flexbox.Row>}
                   </Flexbox.Col>
-                  {this.props.Prss.id === prj.ownerId || prj.ownerId === undefined ?
+                  {this.props.Prss.id === prj.ownerId ||
+                   prj.ownerId === undefined ?
                   <Flexbox.Col xs className="edit-button">
-                     <Button bsStyle="primary" onClick={() => this.toggleEdit(prj)}
-                             disabled={this.state.editing && !(this.state.title &&
-                             this.state.category && this.state.contributors &&
-                             this.state.content)}>
+                     <Button bsStyle="primary" onClick={() =>
+                      this.toggleEdit(prj)}
+                             disabled={this.state.editing &&
+                              !(this.state.title &&
+                              this.state.category && this.state.contributors &&
+                              this.state.content)}>
                         {this.state.editing ? "Save" : "Edit"}
                      </Button>
                   </Flexbox.Col>
@@ -196,8 +201,10 @@ export default class PrjDetail extends Component {
             <div>
                <hr/>
                <ButtonGroup className="button-group">
-                  <Button bsStyle="primary" onClick={() => this.toggleLike(prj)}>
-                     {`${this.props.Liks.length ? "Unlike" : "Like"} (${prj.numLikes})`}
+                  <Button bsStyle="primary" onClick={() =>
+                   this.toggleLike(prj)}>
+                     {`${this.props.Liks.length ? "Unlike" :
+                      "Like"} (${prj.numLikes})`}
                   </Button>
                   <Button bsStyle="primary" onClick={this.openModal}>
                      Leave a Comment
@@ -244,23 +251,30 @@ const EditField = function(props) {
             editView = <FormControl
                componentClass="textarea"
                value={props.editValue}
-               placeholder={props.prjValue}
                onChange={e => props.handleChange(e.target.value)}
             />
             break;
          case "category":
-            let categories = ['Games', 'Music', 'Essays'];
-            editView = <Combobox
-               data={categories}
-               defaultValue={props.editValue}
-               onChange={value => props.handleChange(value)}
-               />
+            let categories = [ 'Games', 'Music', 'Essays' ];
+
+            let options = categories.map(c => {
+               return {value: c, label: c };
+            });
+
+            let selected = options.filter(x =>
+             x.value === props.editValue)[0];
+
+            editView =
+            <div style={{float: "left", width: "200px"}}>
+               <Select options={options}
+                       value={selected}
+                       onChange={item => props.handleChange(item.value)}/>
+            </div>
             break;
          default:
             editView = <FormControl
                type="text"
                value={props.editValue}
-               placeholder={props.prjValue}
                onChange={e => props.handleChange(e.target.value)}
             />
             break;
