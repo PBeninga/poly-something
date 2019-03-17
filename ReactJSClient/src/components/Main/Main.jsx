@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Register, SignIn, PrjOverview, PrjDetail, ConfDialog } from '../index'
-import { Route, Redirect, Switch } from 'react-router-dom';
-import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
+import { Route, Redirect, Switch, Link } from 'react-router-dom';
+import { Navbar, Nav, NavItem, ListGroup, ListGroupItem, Button } from 'react-bootstrap';
 import { LinkContainer } from 'react-router-bootstrap';
 import './Main.css';
 import ErrorModal from './ErrorModal'; 
@@ -9,7 +9,7 @@ import ErrorModal from './ErrorModal';
 var ProtectedRoute = ({component: Cmp, path, ...rest }) => {
    return (<Route path={path} render={(props) => {
       return Object.keys(rest.Prss).length !== 0 ?
-      <Cmp {...rest}/> : <Redirect to='/signin'/>;}}/>);
+      <Cmp {...rest}/> : <Redirect to='/allPrjs'/>;}}/>);
    };
    
 class Main extends Component {
@@ -30,14 +30,14 @@ class Main extends Component {
       let modal = <ErrorModal showModal={showModal} message={this.props.Errs.message} onDismiss={this.props.clearErrors} ></ErrorModal>;
       console.log("Redrawing main");
       return (
+
          <div>
-            <div>
-               <Navbar>
+            <div className="container">
+            <Navbar>
                   <Navbar.Toggle />
                   {this.signedIn() ?
                      <Navbar.Text key={1}>
-                        {`Logged in as: ${this.props.Prss.firstName}
-                         ${this.props.Prss.lastName}`}
+                        {`Logged in as: ${this.props.Prss.email}`}
                      </Navbar.Text>
                      :
                      ''
@@ -47,47 +47,39 @@ class Main extends Component {
                         {this.signedIn() ?
                            [
                               <LinkContainer key={"all"} to="/allPrjs">
-                                 <NavItem>All Projects</NavItem>
-                              </LinkContainer>,
-                              <LinkContainer key={"my"} to="/myPrjs">
-                                 <NavItem>My Projects</NavItem>
+                                 <NavItem>PolySomething</NavItem>
                               </LinkContainer>
                            ]
                            :
                            [
-                              <LinkContainer key={0} to="/signin">
-                                 <NavItem>Sign In</NavItem>
-                              </LinkContainer>,
-                              <LinkContainer key={1} to="/register">
-                                 <NavItem>
-                                    Register
-                               </NavItem>
-                              </LinkContainer>,
+                              <LinkContainer key={"all"} to="/allPrjs">
+                                 <NavItem>PolySomething</NavItem>
+                              </LinkContainer>
                            ]
                         }
                      </Nav>
-                     {this.signedIn() ?
-                        <Nav pullRight>
-                           <NavItem eventKey={1}
-                            onClick={() => this.props.signOut()}>
-                              Sign out
-                           </NavItem>
-                        </Nav>
-                        :
-                        ''
-                     }
                   </Navbar.Collapse>
-               </Navbar>
+                  {this.signedIn() ? 
+                     <div className="pull-right">
+                     <Button bsStyle="primary" >Sign Out</Button>
+                     </div>
+                     :
+                     <div className="pull-right">
+                     <Button bsStyle="primary" onClick={() => this.props.history.push("/signin")}>
+                     Sign In/Register</Button>
+                     </div>}
+                  </Navbar>
             </div>
+
 
             {/*Alternate pages beneath navbar, based on current route*/}
             <Switch>
                <Route exact path='/'
-                  component={() => this.props.Prss ? <Redirect to="/allPrjs" /> : <Redirect to="/signin" />} />
+                  component={() => <Redirect to="/signin" /> } />
                <Route path='/signin' render={() => <SignIn {...this.props} />} />
                <Route path='/register'
                 render={() => <Register {...this.props} />} />
-               <ProtectedRoute path='/allPrjs' component={PrjOverview}
+               <Route path='/allPrjs' component={PrjOverview}
                 {...this.props}/>
                <ProtectedRoute path='/myPrjs' component={PrjOverview}
                 userOnly="true" {...this.props}/>
