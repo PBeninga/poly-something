@@ -60,13 +60,28 @@ export function updatePrjs(userId, cb) {
    };
 }
 
+export function clearPrjs() {
+   return (dispatch, prevState) => {
+      dispatch({ type: 'CLEAR_PRJS' });
+   }
+}
+
 export function addPrj(newPrj, cb) {
    return (dispatch, prevState) => {
       api.postPrj(newPrj)
-      .then(prjRsp => dispatch({type: 'ADD_PRJ', prj: newPrj}))
+      .then(prjRsp => dispatch({type: 'ADD_PRJ', prj: prjRsp}))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
+}
+
+export function getPrj(id, cb) {
+   return (dispatch, prevState) => {
+      api.getPrj(id)
+      .then(prjRsp => dispatch({type: 'GET_PRJ', prj: prjRsp}))
+      .then(() => {if (cb) cb();})
+      .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
+   }
 }
 
 export function delPrj(id, cb) {
@@ -78,11 +93,44 @@ export function delPrj(id, cb) {
    };
 }
 
-export function modPrj(prjId, title, cb) {
+export function modPrj(prjId, body, cb) {
    return (dispatch, prevState) => {
-      api.putPrj(prjId, {title})
-      .then((prjs) => dispatch({type: 'UPDATE_PRJ', data:{title, id:prjId}}))
+      api.putPrj(prjId, body)
+      .then((prjs) => dispatch({type: 'UPDATE_PRJ', data:{id:prjId, body}}))
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
+}
+
+export function getLik(prjId, cb) {
+   return (dispatch, prevState) => {
+      api.getLik(prjId)
+      .then(likRsp => dispatch({type: 'GET_LIK', lik: likRsp}))
+      .then(() => {if (cb) cb();})
+      .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
+   }
+}
+
+export function addLik(prjId, cb) {
+   return (dispatch, prevState) => {
+      api.addLik(prjId)
+      .then(() => api.getLik(prjId))
+      .then(likRsp => dispatch({type: 'GET_LIK', lik: likRsp}))
+      .then(() => api.getPrj(prjId))
+      .then(prjRsp => dispatch({type: 'GET_PRJ', prj: prjRsp}))
+      .then(() => {if (cb) cb();})
+      .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
+   }
+}
+
+export function removeLik(prjId, cb) {
+   return (dispatch, prevState) => {
+      api.removeLik(prjId)
+      .then(() => api.getLik(prjId))
+      .then(likRsp => dispatch({type: 'GET_LIK', lik: likRsp}))
+      .then(() => api.getPrj(prjId))
+      .then(prjRsp => dispatch({type: 'GET_PRJ', prj: prjRsp}))
+      .then(() => {if (cb) cb();})
+      .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
+   }
 }

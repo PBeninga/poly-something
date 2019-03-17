@@ -75,16 +75,23 @@ class Main extends Component {
             {/*Alternate pages beneath navbar, based on current route*/}
             <Switch>
                <Route exact path='/'
-                  component={() => <Redirect to="/signin" /> } />
+
+                  component={() => <Redirect to="/signin" /> } /> {/*old code*/}
+
+                 render={() => <PrjOverview {...this.props} />} />
                <Route path='/signin' render={() => <SignIn {...this.props} />} />
                <Route path='/register'
                 render={() => <Register {...this.props} />} />
                <Route path='/allPrjs' component={PrjOverview}
                 {...this.props}/>
+               <ProtectedRoute path='/newPrj' component={PrjDetail}
+                {...this.props} />
                <ProtectedRoute path='/myPrjs' component={PrjOverview}
                 userOnly="true" {...this.props}/>
-                <ProtectedRoute path='/PrjDetail' component={PrjDetail}
+               <ProtectedRoute path='/PrjDetail' component={PrjDetail}
                 userOnly="true" {...this.props}/>}
+               <ProtectedRoute path='/newPrj' component={PrjDetail}
+                userOnly="true" {...this.props} />
                />
              
             </Switch>

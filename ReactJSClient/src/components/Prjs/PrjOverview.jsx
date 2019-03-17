@@ -3,25 +3,47 @@ import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Col, Row, Button, Glyphicon } from 'react-bootstrap';
 import PrjModal from './PrjModal';
 import { ConfDialog } from '../index';
+import { LinkContainer } from 'react-router-bootstrap';
 import { delPrj} from '../../api';
 import './PrjOverview.css';
 
 export default class PrjOverview extends Component {
    constructor(props) {
       super(props);
-      this.props.updatePrjs();
+      console.log(this.props)
+      props.updatePrjs();
       this.state = {
          showModal: false,
          showConfirmation: false,
+         tags : ["music", "art", "programming", "charity"],
+         selectedTags: []
       }
       this.openModal = this.openModal.bind(this)
       this.callEditPrj = this.callEditPrj.bind(this)
+      this.handleFilter = this.handleFilter.bind(this)
    }
 
    // Open a model with a |prj| (optional)]
    callEditPrj = (prj) =>{
       this.setState({editPrj:true});
       this.openModal(prj);
+   }
+   handleFilter = (e) =>{
+      var newState = {}
+      var target = e.target
+      console.log(e.target)
+      console.log(this.setState)
+      if(target.checked){
+         newState.selectedTags = this.state.selectedTags.concat([target.name])
+      }else{
+         var i = this.state.selectedTags.indexOf(target.name);
+         console.log(i)
+         var newArr = this.state.selectedTags.slice();
+         var index = newArr.indexOf(target.name);
+         if (index !== -1) newArr.splice(index, 1);
+         newState.selectedTags = newArr
+      }
+      this.setState(newState)
    }
    openModal = (prj) => {
       const newState = { showModal: true };
@@ -56,14 +78,19 @@ export default class PrjOverview extends Component {
    }
 
    closeConfirmation = (res) => {
-      this.state.showConfirmation = false;
+      //this.state.showConfirmation = false;
    }
 
    render() {
       var prjItems = [];
+      console.log(this.state)
 
       this.props.Prjs.forEach(prj => {
-         if (!this.props.userOnly || this.props.Prss.id === prj.ownerId)
+         var shouldShow = true
+         for(var x = 0; x < this.state.selectedTags.length; x++){
+            shouldShow = prj.category.includes(this.state.selectedTags);
+         }
+         if(shouldShow || this.state.selectedTags === [])
             prjItems.push(<PrjItem
                key={prj.id}
                prj={prj}
@@ -73,14 +100,22 @@ export default class PrjOverview extends Component {
       });
 
       return (
-         <section className="container">
+         <section>
             <h1>Prj Overview</h1>
-            <ListGroup>
-               {prjItems}
-            </ListGroup>
+
+            <div className="grid-container">
+               <div className="side-menu"><PrjMenu handleFilter={(e) => this.handleFilter(e)}
+                                                   checked={this.state.selectedTags} 
+                                                   tags={this.state.tags}/></div>
+               <div className="grid-content inner-grid-container">
+                  {prjItems}
+               </div> 
+               <div className="grid-footer">Footer</div>
+             </div>
             <Button bsStyle="primary" onClick={this.openModal}>
+
                New Conversation
-            </Button>
+            </Button> */}
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
@@ -104,27 +139,44 @@ export default class PrjOverview extends Component {
       )
    }
 }
+const PrjMenu = function (props) {
+   console.log("HERE:"+JSON.stringify(props))
+   var tags = [];
+   for(var i = 0; i < props.tags.length; i++){
+      tags.push(<div className="text-attrs" key={i}><Row><input
 
+      name= {props.tags[i]}
+      checked={props.checked.includes(props.tags[i])}
+      onChange={props.handleFilter}
+      type="checkbox" /> {props.tags[i]}</Row></div>)
+   }
+   return (<div>{tags}</div>)
+}
 // A Prj list item
 const PrjItem = function (props) {
    console.log("HERE:"+JSON.stringify(props))
-   return (
-      <ListGroupItem>
-         <Row>
-            <Col sm={4}><Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link></Col>
-            <Col sm={4}>{props.prj.lastMessage ? new Intl.DateTimeFormat('us',
-               {
-                  year: "numeric", month: "short", day: "numeric",
-                  hour: "2-digit", minute: "2-digit", second: "2-digit"
-               })
-               .format(props.prj.lastMessage) : "N/A"}</Col>
-            {props.showControls ?
-               <div className="pull-right">
-                  <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
-                  <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
-               </div>
-               : ''}
-         </Row>
-      </ListGroupItem>
-   )
+   return (<div className="grid-item">
+            <img className="img-responsive center" 
+               src="https://www.popsci.com/g00/3_c-7x78x78x78.qpqtdj.dpn_/c-7NPSFQIFVT25x24iuuqtx3ax2fx2fx78x78x78.qpqtdj.dpnx2ftjuftx2fqpqtdj.dpnx2fgjmftx2ftuzmftx2f436_2y_x2fqvcmjdx2fit-3127-24-b-mbshf_x78fc.kqhx3fjuplx3dw65dCAP2x26gdx3d61x2c61x26j21d.nbslx3djnbhf_$/$/$/$/$/$/$/$"
+               alt="logo"
+               width="100"/>
+            <Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link> 
+           </div>)
+      // <ListGroupItem>
+      //    <Row>
+      //       <Col sm={4}><Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link></Col>
+      //       <Col sm={4}>{props.prj.lastMessage ? new Intl.DateTimeFormat('us',
+      //          {
+      //             year: "numeric", month: "short", day: "numeric",
+      //             hour: "2-digit", minute: "2-digit", second: "2-digit"
+      //          })
+      //          .format(props.prj.lastMessage) : "N/A"}</Col>
+      //       {props.showControls ?
+      //          <div className="pull-right">
+      //             <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
+      //             <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
+      //          </div>
+      //          : ''}
+      //    </Row>
+      // </ListGroupItem>
 }
