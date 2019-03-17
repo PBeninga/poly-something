@@ -1,32 +1,39 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
-import { ListGroup, ListGroupItem, Col, Row, Button, Glyphicon } from 'react-bootstrap';
+import { Redirect } from 'react-router-dom';
+import { ListGroup, ListGroupItem, Col, Row, Button, Form,
+   Alert, ButtonGroup, FormControl, Glyphicon } from 'react-bootstrap';
+import Select from 'react-select';
+import * as Flexbox from 'react-flexbox-grid'
 import CmtModal from './CmtModal';
 import './PrjOverview.css';
+import './PrjDetail.css';
 
 export default class PrjDetail extends Component {
    constructor(props) {
       super(props);
-      this.props.updatePrjs();
-      var prjId = parseInt(window.location.pathname.split("/")[2]);
-      var title = "PRJ TITLE";
 
-      console.log(this.props.Prjs);
+      var path = window.location.pathname.split("/");
+      var projectExists = path.length === 3;
 
-      for(var prj in this.props.Prjs){
-         console.log(this.props.Prjs[prj].id + " : " + prjId)
-         if(this.props.Prjs[prj].id === prjId){
-            title = this.props.Prjs[prj].title;
-         }
+      if (projectExists) {
+         var prjId = parseInt(window.location.pathname.split("/")[2]);
+         this.props.getPrj(prjId);
+         this.props.getCmts(prjId);
+         this.props.getLik(prjId);
+      } else {
+         this.props.clearPrjs();
       }
-      this.props.getCmts(prjId);
+
       this.state = {
-         title,
-         prjId,
          showModal: false,
          showConfirmation: false,
+         editing: !projectExists,
+         thumbnailError: false,
+         defaultThumbnail: require('../../images/Project.png')
       }
-      this.openModal = this.openModal.bind(this)
+
+      this.openModal = this.openModal.bind(this);
+      this.toggleEdit = this.toggleEdit.bind(this);
    }
 
    openModal = (prj) => {
@@ -34,22 +41,91 @@ export default class PrjDetail extends Component {
       this.setState(newState);
    }
 
-   modalDismiss = (result) => {
+   modalDismiss = (result, prj) => {
       console.log(result)
       if (result.status === "Ok") {
-         this.props.newCmt(this.state.prjId, result.title);
+         this.props.newCmt(prj.id, result.title);
       }
       this.setState({ showModal: false});
    }
 
+   toggleLike = (prj) => {
+      if (this.props.Liks.length === 0) {
+         this.props.addLik(prj.id);
+      } else {
+         this.props.removeLik(prj.id);
+      }
+   }
+
+   toggleEdit = (prj) => {
+      if (this.state.editing) {
+         let {
+            title,
+            contributors,
+            category,
+            content,
+            thumbnail
+         } = this.state;
+
+         const body = {
+            title,
+            contributors,
+            category,
+            content,
+            thumbnail: thumbnail || "none"
+         };
+
+         if (prj.id) {
+            this.props.modPrj(prj.id, body, () =>
+             this.setState({thumbnailError: false}));
+         } else {
+            this.props.addPrj(body, () => {
+               var prjId = this.props.Prjs[0].id;
+               this.props.history.push(`/PrjDetail/${prjId}`);
+               this.props.getCmts(prjId);
+               this.props.getLik(prjId);
+            });
+         }
+
+         this.setState({editing: false});
+      } else {
+         this.setState({...prj, editing: true});
+      }
+   }
+
+   createEditField = (fieldName, displayContent, editType) => {
+      return (<EditField
+               editing={this.state.editing}
+               editValue={this.state[fieldName]}
+               displayContent={displayContent}
+               editType={editType}
+               handleChange={value => {
+                  var newState = {};
+                  newState[fieldName] = value;
+                  this.setState(newState);
+               }}/>);
+   }
+
    render() {
+      if (this.props.Prjs.length > 1 && !this.state.editing)
+         return null;
+      
+      var prj = this.props.Prjs[0] || {
+         // Create default values if we're making a new project
+         title: "",
+         category: "",
+         contributors: "",
+         content: "",
+         thumbnail: ""
+      };
+
       var prjItems = [];
       if(this.props.Cmts.forEach){
          this.props.Cmts.forEach(cmt => {
                prjItems.push(<PrjItem
                   key={cmt.id}
                   cmt={cmt}
-                  prj={this.state.prjId}
+                  prj={prj}
                   showControls={false}
                   onDelete={() => this.openConfirmation(cmt)}
                   onEdit={() => this.callEditPrj(cmt)} />);
@@ -58,19 +134,91 @@ export default class PrjDetail extends Component {
 
       return (
          <section className="container">
-            <h1>{this.state.title}</h1>
-            <ListGroup>
-               {prjItems}
-            </ListGroup>
-            <Button bsStyle="primary" onClick={this.openModal}>
-               New Comment
-            </Button>
-            {/* Modal for creating and change prj */}
-            <CmtModal
-               showModal={this.state.showModal}
-               title={"New Message"}
-               prjId={this.state.prjId}
-               onDismiss={this.modalDismiss} />
+            <Flexbox.Grid fluid>
+               <Flexbox.Row>
+                  <Flexbox.Col>
+                     <img src={this.state.thumbnailError ?
+                      this.state.defaultThumbnail :
+                      prj.thumbnail || this.state.defaultThumbnail}
+                      className="project-image"
+                      onError={() => this.setState({thumbnailError: true})} />
+                     {this.state.editing ?
+                     <div>
+                        <span className="project-detail">Thmbnail:</span>
+                     </div>
+                     : ''}
+                     {this.createEditField("thumbnail", '')}
+                  </Flexbox.Col>
+                  <Flexbox.Col xs={6} >
+                     <Flexbox.Row>
+                        {this.state.editing ?
+                        <span className="project-detail">Title:</span>
+                        : ''}
+                        {this.createEditField("title", <h1>{prj.title}</h1>)}
+                     </Flexbox.Row>
+                     {prj.contributors || this.state.editing ?
+                     <Flexbox.Row>
+                        <span className="project-detail">By:</span>
+                        {this.createEditField("contributors", prj.contributors)}
+                     </Flexbox.Row> : '' }
+                     <Flexbox.Row xs>
+                        <span className="project-detail">Category:</span>
+                        {this.createEditField("category", prj.category,
+                         "category")}
+                     </Flexbox.Row>
+                     {this.state.editing ? '' :
+                     <Flexbox.Row>
+                        <span className="project-detail">Date posted:</span>
+                        {new Intl.DateTimeFormat('us',
+                        {
+                           year: "numeric", month: "short", day: "numeric",
+                           hour: "2-digit", minute: "2-digit", second: "2-digit"
+                        })
+                        .format(prj.timePosted)}
+                     </Flexbox.Row>}
+                  </Flexbox.Col>
+                  {this.props.Prss.id === prj.ownerId ||
+                   prj.ownerId === undefined ?
+                  <Flexbox.Col xs className="edit-button">
+                     <Button bsStyle="primary" onClick={() =>
+                      this.toggleEdit(prj)}
+                             disabled={this.state.editing &&
+                              !(this.state.title &&
+                              this.state.category && this.state.contributors &&
+                              this.state.content)}>
+                        {this.state.editing ? "Save" : "Edit"}
+                     </Button>
+                  </Flexbox.Col>
+                  : '' }
+               </Flexbox.Row>
+            </Flexbox.Grid>
+            <hr/>
+            <h3>Description</h3>
+            {this.createEditField("content", <div className="content">
+               {prj.content}
+            </div>, "multiline")}
+            {this.state.editing ? '' :
+            <div>
+               <hr/>
+               <ButtonGroup className="button-group">
+                  <Button bsStyle="primary" onClick={() =>
+                   this.toggleLike(prj)}>
+                     {`${this.props.Liks.length ? "Unlike" :
+                      "Like"} (${prj.numLikes})`}
+                  </Button>
+                  <Button bsStyle="primary" onClick={this.openModal}>
+                     Leave a Comment
+                  </Button>
+               </ButtonGroup>
+               <ListGroup>
+                  {prjItems}
+               </ListGroup>
+               <CmtModal
+                  showModal={this.state.showModal}
+                  title={"New Message"}
+                  prjId={prj.id}
+                  onDismiss={(result) => this.modalDismiss(result, prj)} />
+            </div>}
          </section>
       )
    }
@@ -92,4 +240,48 @@ const PrjItem = function (props) {
          <Row><Col sm={4}>{props.cmt.content}</Col></Row>
       </ListGroupItem>
    )
+}
+
+const EditField = function(props) {
+   var editView;
+
+   if (props.editing) {
+      switch (props.editType) {
+         case "multiline":
+            editView = <FormControl
+               componentClass="textarea"
+               value={props.editValue}
+               onChange={e => props.handleChange(e.target.value)}
+            />
+            break;
+         case "category":
+            let categories = [ 'Games', 'Music', 'Essays' ];
+
+            let options = categories.map(c => {
+               return {value: c, label: c };
+            });
+
+            let selected = options.filter(x =>
+             x.value === props.editValue)[0];
+
+            editView =
+            <div style={{float: "left", width: "200px"}}>
+               <Select options={options}
+                       value={selected}
+                       onChange={item => props.handleChange(item.value)}/>
+            </div>
+            break;
+         default:
+            editView = <FormControl
+               type="text"
+               value={props.editValue}
+               onChange={e => props.handleChange(e.target.value)}
+            />
+            break;
+      }
+   }
+
+   return (
+      <div>{ props.editing ? editView : props.displayContent }</div>
+   );
 }

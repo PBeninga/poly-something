@@ -89,10 +89,14 @@ class Main extends Component {
                 render={() => <Register {...this.props} />} />
                <Route path='/allPrjs' component={PrjOverview}
                 {...this.props}/>
+               <ProtectedRoute path='/newPrj' component={PrjDetail}
+                {...this.props} />
                <ProtectedRoute path='/myPrjs' component={PrjOverview}
                 userOnly="true" {...this.props}/>
-                <ProtectedRoute path='/PrjDetail' component={PrjDetail}
+               <ProtectedRoute path='/PrjDetail' component={PrjDetail}
                 userOnly="true" {...this.props}/>}
+               <ProtectedRoute path='/newPrj' component={PrjDetail}
+                userOnly="true" {...this.props} />
                />
              
             </Switch>

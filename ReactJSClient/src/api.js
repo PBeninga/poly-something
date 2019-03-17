@@ -110,10 +110,10 @@ export function signIn(cred) {
  * @returns {Promise} result of the sign out request
  */
 export function signOut() {
-    return del("Ssns/" + cookie);
+   return del("Ssns/" + cookie);
 }
 export function deletePrj(id){
-    return del(`Prjs/${id}`)
+   return del(`Prjs/${id}`)
 }
 
 /**
@@ -126,12 +126,12 @@ export function postPrs(user) {
 }
 
 export function getCmts(id){
-    return get(`Cmts/${id}`)
-    .then(rsp => rsp.json());
+   return get(`Cmts/${id}`)
+   .then(rsp => rsp.json());
 }
 
 export function postCmt(prjId, msg){
-    return post(`Cmts/${prjId}`,{content:msg})
+   return post(`Cmts/${prjId}`,{content:msg})
 }
 
 /**
@@ -143,10 +143,14 @@ export function getPrjs(page, selectedTags, userId){
         "&offset="+page*16+(userId ? "&owner="+userId : ""))
     .then((res) => res.json())
 }
+export function getPrj(id) {
+   return get(`Prjs/${id}`)
+   .then(rsp => rsp.json());
+}
 
 export function putPrj(id, body) {
-    console.log(id + " " + JSON.stringify(body))
-    return put(`Prjs/${id}`, body)
+   console.log(id + " " + JSON.stringify(body))
+   return put(`Prjs/${id}`, body)
 }
 
 export function postPrj(body) {
@@ -155,6 +159,19 @@ export function postPrj(body) {
       return get(`Prjs/${location[location.length-1]}`);
    })
    .then(rsp => rsp.json());
+}
+
+export function getLik(id) {
+   return get(`Liks/${id}`)
+   .then(rsp => rsp.json());
+}
+
+export function addLik(id) {
+   return post(`Liks/${id}`);
+}
+
+export function removeLik(id) {
+   return del(`Liks/${id}`);
 }
 
 const errMap = {

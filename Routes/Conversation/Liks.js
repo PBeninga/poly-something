@@ -35,7 +35,7 @@ router.post('/:prjId', function(req, res) {
 
 router.delete('/:prjId', function(req, res){
    var cnn = req.cnn;
-   var prjId = req.params.prjId;
+   var prjId = parseInt(req.params.prjId, 10);
 
    async.waterfall([
    function(cb) {
@@ -44,6 +44,24 @@ router.delete('/:prjId', function(req, res){
    }],
    function(err) {
       res.status(200).end();
+      cnn.release();
+   });
+});
+
+router.get('/:prjId', function(req, res) {
+   var cnn = req.cnn;
+   var prjId = parseInt(req.params.prjId, 10);
+
+   async.waterfall([
+   function(cb) {
+      cnn.chkQry('select * from Likes where prjId = ? and prsId = ?',
+       [prjId, req.session.id], cb);
+   },
+   function(result, fields, cb) {
+      res.json(result);
+      cb();
+   }],
+   function(err) {
       cnn.release();
    });
 });
