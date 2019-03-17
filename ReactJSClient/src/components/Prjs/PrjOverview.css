@@ -59,3 +59,9 @@
     margin-right: auto;
     width: 50%;
   }
+.right{
+    margin-right: 0;
+}
+.hide{
+    display:none;
+}

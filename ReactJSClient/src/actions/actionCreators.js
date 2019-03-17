@@ -53,7 +53,7 @@ export function register(data, cb) {
 
 export function updatePrjs(page, selectedTags, userId, cb) {
    return (dispatch, prevState) => {
-      console.log(selectedTags)
+      console.log(page)
       api.getPrjs(page, selectedTags, userId)
       .then((prjs) => {console.log("PROJECTS: "+JSON.stringify(prjs)); return dispatch({ type: 'UPDATE_PRJS', prjs })})
       .then(() => {if (cb) cb();})
