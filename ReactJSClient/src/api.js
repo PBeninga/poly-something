@@ -72,6 +72,7 @@ export function put(endpoint, body) {
 }
 
 export function get(endpoint) {
+    console.log("\n\n\n" + endpoint + "\n\n\n");
     return fetchWithHandling(baseURL + endpoint, {
         method: 'GET',
         ...reqConf
@@ -137,8 +138,11 @@ export function postCmt(prjId, msg){
 /**
  * @returns {Promise} json parsed data
  */
-export function getPrjs(userId) {
-   return get("Prjs" + (userId ? "?owner="+userId : ""))
+export function getPrjs(timePosted, limit, offset) {
+   return get("Prjs" + (timePosted || !isNaN(offset) && !isNaN(limit) ? "?" : "") + 
+    (timePosted ? "owner="+timePosted : "") +
+    (!isNaN(offset) && !isNaN(limit) ? (timePosted ? "&" : "") +
+    "limit="+limit+"&offset="+offset : ""))
    .then((res) => res.json());
 }
 

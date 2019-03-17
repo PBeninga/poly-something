@@ -10,13 +10,16 @@ import './PrjOverview.css';
 export default class PrjOverview extends Component {
    constructor(props) {
       super(props);
-      console.log(this.props)
-      props.updatePrjs();
+      console.log(this.props);
+      props.updatePrjs(null, 3, 0);
+      
       this.state = {
          showModal: false,
          showConfirmation: false,
-         tags : ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing"],
-         selectedTags: []
+         tags: ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing"],
+         selectedTags: [],
+         displayNum: 12, // number of elements to display per page
+         curPage: 1 // current page index
       }
       this.openModal = this.openModal.bind(this)
       this.callEditPrj = this.callEditPrj.bind(this)
@@ -33,7 +36,7 @@ export default class PrjOverview extends Component {
       var target = e.target
       console.log(e.target)
       console.log(this.setState)
-      if(target.checked){
+      if(target.checked) {
          newState.selectedTags = this.state.selectedTags.concat([target.name])
       }else{
          var i = this.state.selectedTags.indexOf(target.name);
@@ -102,20 +105,20 @@ export default class PrjOverview extends Component {
 
       return (
          <section>
-            <h1>Prj Overview</h1>
+            <h1>{/*Prj Overview*/}</h1>
 
             <div className="grid-container">
-               <div className="side-menu"><PrjMenu handleFilter={(e) => this.handleFilter(e)}
-                                                   checked={this.state.selectedTags} 
-                                                   tags={this.state.tags}/></div>
+               <div className="side-menu">
+               <PrjMenu
+                  handleFilter={(e) => this.handleFilter(e)}
+                  checked={this.state.selectedTags} 
+                  tags={this.state.tags}/>
+               </div>
                <div className="grid-content inner-grid-container">
                   {prjItems}
                </div> 
                <div className="grid-footer">Footer</div>
              </div>
-            <Button bsStyle="primary" onClick={() => this.props.history.push("/PrjDetail")}>
-               Upload a New Project
-            </Button>
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
@@ -150,11 +153,18 @@ const PrjMenu = function (props) {
       onChange={props.handleFilter}
       type="checkbox" /> {props.tags[i]}</Row></div>)
    }
-   return (<div>{tags}</div>)
+   return (<div>
+               <div className="catHeader">Filter by category</div>
+               <div>{tags}</div>
+               <Link to={"/PrjDetail"}>
+               <Button bsStyle="primary" className="toDetailBtn" bsSize="small">
+                  Upload a New Project
+               </Button>
+               </Link>
+            </div>)
 }
 // A Prj list item
 const PrjItem = function (props) {
-   console.log("HERE:"+JSON.stringify(props))
    return (<Link to={"/PrjDetail/" + props.prj.id}>
          <div className="grid-item" >
             <div className="listingCategory center">{props.prj.category}</div> 

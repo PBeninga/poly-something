@@ -13,8 +13,10 @@
  }
 .side-menu { 
     grid-area: menu;
+    width: 160px;
+    position: relative;
  }
- .text-attrs{
+ .text-attrs {
     text-align: left;
     font-size:10px;
     padding: 0px;
@@ -43,16 +45,16 @@
   grid-template-areas:
     'menu main main main main main'
     'menu footer footer footer footer footer';
-  grid-gap: 10px;
+  grid-gap: 5px;
   background-color: #2196F3;
-  padding: 10px;
+  padding: 5px;
   border-radius: 10px
 }
 
 .grid-container > div {
   background-color: rgba(255, 255, 255, 0.8);
   text-align: center;
-  padding: 20px 0;
+  padding: 10px 0px;
   font-size: 30px;
   border-radius: 10px
 }
@@ -72,3 +74,12 @@
   height:20px;
   font-size:15px;
 }
+.catHeader {
+  font-size:15px;
+  padding:3px;
+}/*
+.toDetailBtn {
+  bottom: 10px;
+  left: 10px;
+  position: absolute;
+}*/

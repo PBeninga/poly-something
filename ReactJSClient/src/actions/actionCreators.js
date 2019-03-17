@@ -51,9 +51,9 @@ export function register(data, cb) {
    };
 }
 
-export function updatePrjs(userId, cb) {
+export function updatePrjs(timePosted, limit, offset, cb) {
    return (dispatch, prevState) => {
-      api.getPrjs(userId)
+      api.getPrjs(timePosted, limit, offset)
       .then((prjs) => {console.log("here: "+JSON.stringify(prjs)); return dispatch({ type: 'UPDATE_PRJS', prjs })})
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
