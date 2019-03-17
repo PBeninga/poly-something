@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ListGroup, ListGroupItem, Col, Row, Button, Glyphicon } from 'react-bootstrap';
 import PrjModal from './PrjModal';
 import { ConfDialog } from '../index';
+import { LinkContainer } from 'react-router-bootstrap';
 import { delPrj} from '../../api';
 import './PrjOverview.css';
 
@@ -101,6 +102,7 @@ export default class PrjOverview extends Component {
       return (
          <section>
             <h1>Prj Overview</h1>
+
             <div className="grid-container">
                <div className="side-menu"><PrjMenu handleFilter={(e) => this.handleFilter(e)}
                                                    checked={this.state.selectedTags} 
@@ -111,8 +113,9 @@ export default class PrjOverview extends Component {
                <div className="grid-footer">Footer</div>
              </div>
             <Button bsStyle="primary" onClick={this.openModal}>
+
                New Conversation
-            </Button>
+            </Button> */}
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
