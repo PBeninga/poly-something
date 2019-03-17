@@ -10,18 +10,25 @@ export default class PrjOverview extends Component {
    constructor(props) {
       super(props);
       console.log(this.props)
-      props.updatePrjs();
       this.state = {
          showModal: false,
          showConfirmation: false,
          tags : ["music", "art", "programming", "charity"],
+         page: 0,
          selectedTags: []
       }
+      props.updatePrjs(this.state.page, this.state.selectedTags);
       this.openModal = this.openModal.bind(this)
       this.callEditPrj = this.callEditPrj.bind(this)
       this.handleFilter = this.handleFilter.bind(this)
    }
-
+   componentDidUpdate = (prevProps, prevState, snapshot) => {
+      if(prevState.selectedTags !== this.state.selectedTags || 
+         this.state.page !== prevState.page){
+         console.log("LOADING!!!!!!!!!!!!!!!!!")
+         this.props.updatePrjs(this.state.page, this.state.selectedTags);
+      }
+   }
    // Open a model with a |prj| (optional)]
    callEditPrj = (prj) =>{
       this.setState({editPrj:true});
@@ -85,17 +92,12 @@ export default class PrjOverview extends Component {
       console.log(this.state)
 
       this.props.Prjs.forEach(prj => {
-         var shouldShow = true
-         for(var x = 0; x < this.state.selectedTags.length; x++){
-            shouldShow = prj.category.includes(this.state.selectedTags);
-         }
-         if(shouldShow || this.state.selectedTags === [])
-            prjItems.push(<PrjItem
-               key={prj.id}
-               prj={prj}
-               showControls={prj.ownerId === this.props.Prss.id}
-               onDelete={() => this.openConfirmation(prj)}
-               onEdit={() => this.callEditPrj(prj)} />);
+         prjItems.push(<PrjItem
+            key={prj.id}
+            prj={prj}
+            showControls={prj.ownerId === this.props.Prss.id}
+            onDelete={() => this.openConfirmation(prj)}
+            onEdit={() => this.callEditPrj(prj)} />);
       });
 
       return (
@@ -141,7 +143,6 @@ const PrjMenu = function (props) {
    var tags = [];
    for(var i = 0; i < props.tags.length; i++){
       tags.push(<div className="text-attrs" key={i}><Row><input
-
       name= {props.tags[i]}
       checked={props.checked.includes(props.tags[i])}
       onChange={props.handleFilter}
