@@ -15,7 +15,7 @@ export default class PrjOverview extends Component {
       this.state = {
          showModal: false,
          showConfirmation: false,
-         tags : ["music", "art", "programming", "charity"],
+         tags : ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing"],
          selectedTags: []
       }
       this.openModal = this.openModal.bind(this)
@@ -88,12 +88,13 @@ export default class PrjOverview extends Component {
       this.props.Prjs.forEach(prj => {
          var shouldShow = true
          for(var x = 0; x < this.state.selectedTags.length; x++){
-            shouldShow = prj.category.includes(this.state.selectedTags);
+            shouldShow = this.state.selectedTags.includes(prj.category);
          }
          if(shouldShow || this.state.selectedTags === [])
             prjItems.push(<PrjItem
                key={prj.id}
                prj={prj}
+               category={prj.category}
                showControls={prj.ownerId === this.props.Prss.id}
                onDelete={() => this.openConfirmation(prj)}
                onEdit={() => this.callEditPrj(prj)} />);
@@ -112,10 +113,9 @@ export default class PrjOverview extends Component {
                </div> 
                <div className="grid-footer">Footer</div>
              </div>
-            <Button bsStyle="primary" onClick={this.openModal}>
-
-               New Conversation
-            </Button> */}
+            <Button bsStyle="primary" onClick={() => this.props.history.push("/PrjDetail")}>
+               Upload a New Project
+            </Button>
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
@@ -155,13 +155,16 @@ const PrjMenu = function (props) {
 // A Prj list item
 const PrjItem = function (props) {
    console.log("HERE:"+JSON.stringify(props))
-   return (<div className="grid-item">
+   return (<Link to={"/PrjDetail/" + props.prj.id}>
+         <div className="grid-item" >
+            <div className="listingCategory center">{props.prj.category}</div> 
             <img className="img-responsive center" 
                src="https://www.popsci.com/g00/3_c-7x78x78x78.qpqtdj.dpn_/c-7NPSFQIFVT25x24iuuqtx3ax2fx2fx78x78x78.qpqtdj.dpnx2ftjuftx2fqpqtdj.dpnx2fgjmftx2ftuzmftx2f436_2y_x2fqvcmjdx2fit-3127-24-b-mbshf_x78fc.kqhx3fjuplx3dw65dCAP2x26gdx3d61x2c61x26j21d.nbslx3djnbhf_$/$/$/$/$/$/$/$"
                alt="logo"
                width="100"/>
-            <Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link> 
-           </div>)
+            <div className="listingTitle center">{props.prj.title}</div> 
+           </div>
+           </Link>)
       // <ListGroupItem>
       //    <Row>
       //       <Col sm={4}><Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link></Col>

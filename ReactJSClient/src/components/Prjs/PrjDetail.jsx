@@ -255,7 +255,7 @@ const EditField = function(props) {
             />
             break;
          case "category":
-            let categories = [ 'Games', 'Music', 'Essays' ];
+            let categories = ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing" ];
 
             let options = categories.map(c => {
                return {value: c, label: c };

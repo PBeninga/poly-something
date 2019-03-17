@@ -23,7 +23,23 @@
   to { transform: rotate(360deg); }
 }
 
-.container {
-  display : flex;
-  justify-content: center;
+.titleImage {
+  width: 512px;
+  height: 156px;
+  padding: 0 10px 10px 0;
+}
+
+.titleImage:hover {
+  background: rgba(68, 68, 216, 0.2);
+}
+
+.signBtn {
+  padding: 45px 20px;
+  bottom: 0;
+  right: 0;
+  position: absolute;
+}
+
+.header {
+  position: relative;
 }
