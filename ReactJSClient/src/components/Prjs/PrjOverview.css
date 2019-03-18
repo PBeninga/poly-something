@@ -33,7 +33,7 @@
   padding: 20px;
   font-size: 30px;
   text-align: center;
-  border-radius: 10px
+  border-radius: 10px;
 }
 .grid-container {
   display: grid;
@@ -45,7 +45,10 @@
   padding: 10px;
   border-radius: 10px
 }
-
+.capped-height{
+  max-width: 200px !important;
+  max-height: 100px;
+}
 .grid-container > div {
   background-color: rgba(255, 255, 255, 0.8);
   text-align: center;
