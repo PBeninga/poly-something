@@ -22,12 +22,10 @@ class Register extends Component {
    constructor(props) {
       super(props);
       this.state = {
-         firstName: '',
-         lastName: '',
+         handle: '',
          email: '',
          password: '',
          passwordTwo: '',
-         termsAccepted: false,
          role: 0
       }
       this.handleChange = this.handleChange.bind(this);
@@ -35,24 +33,20 @@ class Register extends Component {
 
    submit() {
       let { // Make a copy of the relevant values in current state
-         firstName,
-         lastName,
+         handle,
          email,
          password,
-         termsAccepted,
          role
       } = this.state;
 
       const user = {
-         firstName,
-         lastName,
+         handle,
          email,
          password,
-         termsAccepted,
          role
       };
 
-      this.props.register(user, () => {console.log("trying to display pop up"); this.setState({offerSignIn: true})});
+      this.props.register(user, () => {this.props.history.push("/signin")});
    }
 
    handleChange(ev) {
@@ -76,30 +70,23 @@ class Register extends Component {
 
    formValid() {
       let s = this.state;
-      return s.email && s.password && s.password === s.passwordTwo
-       && s.termsAccepted;
+      return s.email && s.handle && s.password && s.password === s.passwordTwo
    }
 
    render() {
      return (
         <div className="container">
            <form>
+              <FieldGroup id="handle" type="text" label="Handle"
+               placeholder="Enter user handle" value={this.state.handle}
+               onChange={this.handleChange}
+               className = {this.state["firstNameBLUE"] ? "highlighted" : ""}
+               />
+              
               <FieldGroup id="email" type="email" label="Email Address"
                placeholder="Enter email" value={this.state.email}
                onChange={this.handleChange} required={true}
                className = {this.state["emailBLUE"] ? "highlighted" : ""}
-               />
-
-              <FieldGroup id="firstName" type="text" label="First Name"
-               placeholder="Enter first name" value={this.state.firstName}
-               onChange={this.handleChange}
-               className = {this.state["firstNameBLUE"] ? "highlighted" : ""}
-               />
-
-              <FieldGroup id="lastName" type="text" label="Last Name"
-               placeholder="Enter last name" value={this.state.lastName}
-               onChange={this.handleChange} required={true}
-               className = {this.state["lastNameBLUE"] ? "highlighted" : ""}
                />
 
               <FieldGroup id="password" type="password" label="Password"
@@ -112,11 +99,6 @@ class Register extends Component {
                onChange={this.handleChange} required={true}
                help="Repeat your password"
               />
-
-              <Checkbox  id="termsAccepted" value={this.state.termsAccepted}
-               onChange={this.handleChange}>
-                  Do you accept the terms and conditions?
-              </Checkbox>
            </form>
 
            {this.state.password !== this.state.passwordTwo ?
@@ -129,7 +111,7 @@ class Register extends Component {
               Submit
            </Button>
 
-           <ConfDialog
+           {/*<ConfDialog
               show={this.state.offerSignIn}
               title="Registration Success"
               body={`Would you like to log in as ${this.state.email}?`}
@@ -142,7 +124,7 @@ class Register extends Component {
                      () => this.props.history.push("/"));
                  }
               }}
-           />
+            />*/}
         </div>
       )
    }
