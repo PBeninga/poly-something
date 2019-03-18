@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { ListGroup, ListGroupItem, Col, Row, Button, Glyphicon, ButtonToolbar } from 'react-bootstrap';
+import { Row, Button } from 'react-bootstrap';
 import PrjModal from './PrjModal';
 import { ConfDialog } from '../index';
-import { delPrj} from '../../api';
 import './PrjOverview.css';
 
 export default class PrjOverview extends Component {
@@ -13,7 +12,8 @@ export default class PrjOverview extends Component {
       this.state = {
          showModal: false,
          showConfirmation: false,
-         tags : ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing"],
+         tags : ["Art", "Community", "Miscellaneous", "Music",
+          "Programming", "Writing"],
          page: 0,
          selectedTags: []
       }
@@ -40,19 +40,19 @@ export default class PrjOverview extends Component {
       this.setState({editPrj:true});
       this.openModal(prj);
    }
-   handleFilter = (e) =>{
+   handleFilter = (e) => {
       var newState = {}
       var target = e.target
-      console.log(e.target)
-      console.log(this.setState)
-      if(target.checked){
+      
+      if(target.checked) {
          newState.selectedTags = this.state.selectedTags.concat([target.name])
-      }else{
+      } else {
          var i = this.state.selectedTags.indexOf(target.name);
-         console.log(i)
          var newArr = this.state.selectedTags.slice();
          var index = newArr.indexOf(target.name);
-         if (index !== -1) newArr.splice(index, 1);
+
+         if (index !== -1)
+            newArr.splice(index, 1);
          newState.selectedTags = newArr
       }
       this.setState(newState)
@@ -96,9 +96,9 @@ export default class PrjOverview extends Component {
    render() {
       var prjItems = [];
       console.log(this.state)
-
+      var maxElems = 12;
       this.props.Prjs.forEach((prj, index) => {
-         if(index < 12)
+         if(index < maxElems)
          prjItems.push(<PrjItem
             key={prj.id}
             prj={prj}
@@ -106,7 +106,6 @@ export default class PrjOverview extends Component {
             onDelete={() => this.openConfirmation(prj)}
             onEdit={() => this.callEditPrj(prj)} />);
       });
-
       return (
          <section>
             <div className="grid-container">
@@ -124,7 +123,7 @@ export default class PrjOverview extends Component {
                      Previous Page
                   </Button>
                   <Button onClick={() => this.pageChange(1)} className=
-                   {this.props.Prjs.length === 13 ? "" : "hide"}
+                   {this.props.Prjs.length === maxElems+1 ? "" : "hide"}
                    bsStyle="primary">
                      Next Page
                   </Button>
@@ -176,16 +175,11 @@ const PrjMenu = function (props) {
 }
 // A Prj list item
 const PrjItem = function (props) {
-   var srcImg = new Image();
-
-   srcImg.src = props.prj.thumbnail;
-   if(!srcImg.width)
-      srcImg.src = 'logo.png';
 
    return (<div className="grid-item">
             <div className={props.prj.category+"-text"}>{props.prj.category}</div>
-            <img className="img-responsive center capped-height" 
-               src={srcImg.src}
+            <img className="img-responsive center capped-height small-text" id={props.prj.id}
+               src={props.prj.thumbnail || 'Project.png'}
                alt={"Image Not Available"}/>
             <Link to={"/PrjDetail/" + props.prj.id} className="titleText">{props.prj.title}</Link> 
            </div>)

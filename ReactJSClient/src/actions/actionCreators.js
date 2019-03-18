@@ -18,15 +18,15 @@ export function clearErrors(){
 export function getCmts(id, cb){
    return (dispatch, prevState) => {
       api.getCmts(id)
-         .then((cmts) => dispatch({type: 'UPDATE_CMTS', cmts}))
-         .then(() => {if (cb) cb();})
-         .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
+      .then((cmts) => dispatch({type: 'UPDATE_CMTS', cmts}))
+      .then(() => {if (cb) cb();})
+      .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
 }
 
 export function newCmt(prjId, cmt, cb){
    return (dispatch, prevState) => {
-   api.postCmt(prjId, cmt)
+      api.postCmt(prjId, cmt)
       .then(api.getCmts(prjId)
       .then((cmts) => dispatch({type: 'UPDATE_CMTS', cmts})))
       .then(() => {if (cb) cb();})
@@ -53,9 +53,8 @@ export function register(data, cb) {
 
 export function updatePrjs(page, selectedTags, userId, cb) {
    return (dispatch, prevState) => {
-      console.log(page)
       api.getPrjs(page, selectedTags, userId)
-      .then((prjs) => {console.log("PROJECTS: "+JSON.stringify(prjs)); return dispatch({ type: 'UPDATE_PRJS', prjs })})
+      .then((prjs) => { return dispatch({ type: 'UPDATE_PRJS', prjs })})
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };
@@ -80,7 +79,7 @@ export function getPrj(id, cb) {
    return (dispatch, prevState) => {
       api.getPrj(id)
       .then(prjRsp => dispatch({type: 'GET_PRJ', prj: prjRsp}))
-      .then(() => {if (cb) cb();})
+      .then(() => {if (cb) cb(id);})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    }
 }

@@ -7,6 +7,7 @@ import * as Flexbox from 'react-flexbox-grid'
 import CmtModal from './CmtModal';
 import './PrjOverview.css';
 import './PrjDetail.css';
+import { clearErrors } from '../../actions/actionCreators';
 
 var maxTitleLength = 15;
 
@@ -19,7 +20,16 @@ export default class PrjDetail extends Component {
 
       if (projectExists) {
          var prjId = parseInt(window.location.pathname.split("/")[2]);
-         this.props.getPrj(prjId);
+         this.props.getPrj(prjId, (id) => {
+            var shouldErr = true;
+            this.props.Prjs.forEach((prj) => {
+               if(prj.id === id){
+                  shouldErr = false;
+               }
+            })
+            if(shouldErr)
+               throw new Error();
+         });
          this.props.getCmts(prjId);
          this.props.getLik(prjId);
       } else {
@@ -100,20 +110,20 @@ export default class PrjDetail extends Component {
    }
 
    createEditField = (fieldName, displayContent, editType) => {
-      return (<EditField
-               editing={this.state.editing}
-               editValue={this.state[fieldName]}
-               displayContent={displayContent}
-               editType={editType}
-               handleChange={value => {
-                  var newState = {};
+      return (
+       <EditField
+         editing={this.state.editing}
+         editValue={this.state[fieldName]}
+         displayContent={displayContent}
+         editType={editType}
+         handleChange={value => {
+            var newState = {};
 
-                  if (fieldName === "title" && value.length > maxTitleLength)
-                     value = value.substring(0, maxTitleLength);
-
-                  newState[fieldName] = value;
-                  this.setState(newState);
-               }}/>);
+            if (fieldName === "title" && value.length > maxTitleLength)
+               value = value.substring(0, maxTitleLength);
+            newState[fieldName] = value;
+            this.setState(newState);
+       }}/>);
    }
 
    render() {
@@ -132,13 +142,14 @@ export default class PrjDetail extends Component {
       var prjItems = [];
       if(this.props.Cmts.forEach){
          this.props.Cmts.forEach(cmt => {
-               prjItems.push(<PrjItem
-                  key={cmt.id}
-                  cmt={cmt}
-                  prj={prj}
-                  showControls={false}
-                  onDelete={() => this.openConfirmation(cmt)}
-                  onEdit={() => this.callEditPrj(cmt)} />);
+            prjItems.push(
+             <PrjItem
+               key={cmt.id}
+               cmt={cmt}
+               prj={prj}
+               showControls={false}
+               onDelete={() => this.openConfirmation(cmt)}
+               onEdit={() => this.callEditPrj(cmt)} />);
          });
       }
 
@@ -228,7 +239,9 @@ export default class PrjDetail extends Component {
                   showModal={this.state.showModal}
                   title={"New Comment"}
                   prjId={prj.id}
-                  onDismiss={(result) => this.modalDismiss(result, prj)} />
+                  onDismiss={(result) => {
+                     this.modalDismiss(result, prj);
+                  }} />
             </div>}
          </section>
       )
