@@ -8,6 +8,8 @@ import CmtModal from './CmtModal';
 import './PrjOverview.css';
 import './PrjDetail.css';
 
+var maxTitleLength = 15;
+
 export default class PrjDetail extends Component {
    constructor(props) {
       super(props);
@@ -29,7 +31,7 @@ export default class PrjDetail extends Component {
          showConfirmation: false,
          editing: !projectExists,
          thumbnailError: false,
-         defaultThumbnail: require('../../images/Project.png')
+         defaultThumbnail: '/Project.png'
       }
 
       this.openModal = this.openModal.bind(this);
@@ -72,7 +74,7 @@ export default class PrjDetail extends Component {
             contributors,
             category,
             content,
-            thumbnail: thumbnail || "none"
+            thumbnail: thumbnail || '/Project.png'
          };
 
          if (prj.id) {
@@ -101,6 +103,10 @@ export default class PrjDetail extends Component {
                editType={editType}
                handleChange={value => {
                   var newState = {};
+
+                  if (fieldName === "title" && value.length > maxTitleLength)
+                     value = value.substring(0, maxTitleLength);
+
                   newState[fieldName] = value;
                   this.setState(newState);
                }}/>);
@@ -161,7 +167,7 @@ export default class PrjDetail extends Component {
                         <span className="project-detail">By:</span>
                         {this.createEditField("contributors", prj.contributors)}
                      </Flexbox.Row> : '' }
-                     <Flexbox.Row xs>
+                     <Flexbox.Row>
                         <span className="project-detail">Category:</span>
                         {this.createEditField("category", prj.category,
                          "category")}
@@ -255,7 +261,8 @@ const EditField = function(props) {
             />
             break;
          case "category":
-            let categories = [ 'Games', 'Music', 'Essays' ];
+            let categories = ["Art", "Community", "Miscellaneous",
+             "Music", "Programming", "Writing"]
 
             let options = categories.map(c => {
                return {value: c, label: c };

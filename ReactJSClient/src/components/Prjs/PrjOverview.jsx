@@ -1,9 +1,8 @@
 import React, { Component } from 'react';
 import { Link } from 'react-router-dom';
-import { ListGroup, ListGroupItem, Col, Row, Button, Glyphicon } from 'react-bootstrap';
+import { ListGroup, ListGroupItem, Col, Row, Button, Glyphicon, ButtonToolbar } from 'react-bootstrap';
 import PrjModal from './PrjModal';
 import { ConfDialog } from '../index';
-import { LinkContainer } from 'react-router-bootstrap';
 import { delPrj} from '../../api';
 import './PrjOverview.css';
 
@@ -11,18 +10,31 @@ export default class PrjOverview extends Component {
    constructor(props) {
       super(props);
       console.log(this.props)
-      props.updatePrjs();
       this.state = {
          showModal: false,
          showConfirmation: false,
-         tags : ["music", "art", "programming", "charity"],
+         tags : ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing"],
+         page: 0,
          selectedTags: []
       }
+      props.updatePrjs(this.state.page, this.state.selectedTags);
       this.openModal = this.openModal.bind(this)
       this.callEditPrj = this.callEditPrj.bind(this)
       this.handleFilter = this.handleFilter.bind(this)
+      this.pageChange = this.pageChange.bind(this)
    }
-
+   componentDidUpdate = (prevProps, prevState, snapshot) => {
+      console.log()
+      if(prevState.selectedTags !== this.state.selectedTags){
+         this.props.updatePrjs(this.state.page, this.state.selectedTags);
+      }
+   }
+   pageChange = (delta) =>{
+      var newState = {}
+      newState.page = this.state.page += delta
+      this.setState(newState)
+      this.props.updatePrjs(this.state.page, this.state.selectedTags);
+   } 
    // Open a model with a |prj| (optional)]
    callEditPrj = (prj) =>{
       this.setState({editPrj:true});
@@ -86,36 +98,29 @@ export default class PrjOverview extends Component {
       console.log(this.state)
 
       this.props.Prjs.forEach(prj => {
-         var shouldShow = true
-         for(var x = 0; x < this.state.selectedTags.length; x++){
-            shouldShow = prj.category.includes(this.state.selectedTags);
-         }
-         if(shouldShow || this.state.selectedTags === [])
-            prjItems.push(<PrjItem
-               key={prj.id}
-               prj={prj}
-               showControls={prj.ownerId === this.props.Prss.id}
-               onDelete={() => this.openConfirmation(prj)}
-               onEdit={() => this.callEditPrj(prj)} />);
+         prjItems.push(<PrjItem
+            key={prj.id}
+            prj={prj}
+            showControls={prj.ownerId === this.props.Prss.id}
+            onDelete={() => this.openConfirmation(prj)}
+            onEdit={() => this.callEditPrj(prj)} />);
       });
 
       return (
          <section>
-            <h1>Prj Overview</h1>
-
             <div className="grid-container">
                <div className="side-menu"><PrjMenu handleFilter={(e) => this.handleFilter(e)}
                                                    checked={this.state.selectedTags} 
-                                                   tags={this.state.tags}/></div>
+                                                   tags={this.state.tags}
+                                                   signedIn = {Object.keys(this.props.Prss).length !== 0}/></div>
                <div className="grid-content inner-grid-container">
                   {prjItems}
                </div> 
-               <div className="grid-footer">Footer</div>
+               <div className="grid-footer">
+                     <Button variant="primary" className={this.state.page === 0 ? "hide" : ""} onClick={() => this.pageChange(-1)}>Previous Page</Button>
+                     <Button onClick={() => this.pageChange(1)} className={this.props.Prjs.length < 16 ? "hide" : ""} variant="primary">Next Page</Button>
+               </div>
              </div>
-            <Button bsStyle="primary" onClick={this.openModal}>
-
-               New Conversation
-            </Button> */}
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
@@ -150,16 +155,23 @@ const PrjMenu = function (props) {
       onChange={props.handleFilter}
       type="checkbox" /> {props.tags[i]}</Row></div>)
    }
-   return (<div>{tags}</div>)
+   return (<div>
+               <div className="catHeader small-text">Filter by category</div>
+               <div>{tags}</div>
+               <Link to={props.signedIn ? "/PrjDetail" : "/signin"}>
+               <Button bsStyle="primary" className="toDetailBtn" bsSize="small">
+                  Upload a New Project
+               </Button>
+               </Link>
+            </div>)
 }
 // A Prj list item
 const PrjItem = function (props) {
-   console.log("HERE:"+JSON.stringify(props))
    return (<div className="grid-item">
-            <img className="img-responsive center" 
-               src="https://www.popsci.com/g00/3_c-7x78x78x78.qpqtdj.dpn_/c-7NPSFQIFVT25x24iuuqtx3ax2fx2fx78x78x78.qpqtdj.dpnx2ftjuftx2fqpqtdj.dpnx2fgjmftx2ftuzmftx2f436_2y_x2fqvcmjdx2fit-3127-24-b-mbshf_x78fc.kqhx3fjuplx3dw65dCAP2x26gdx3d61x2c61x26j21d.nbslx3djnbhf_$/$/$/$/$/$/$/$"
-               alt="logo"
-               width="100"/>
+            <div className={props.prj.category+"-text"}>{props.prj.category}</div>
+            <img className="img-responsive center capped-height" 
+               src={props.prj.thumbnail}
+               alt="logo"/>
             <Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link> 
            </div>)
       // <ListGroupItem>
