@@ -138,20 +138,19 @@ export function postCmt(prjId, msg){
 /**
  * @returns {Promise} json parsed data
  */
-<<<<<<< HEAD
+/*
 export function getPrjs(timePosted, limit, offset) {
    return get("Prjs" + (timePosted || !isNaN(offset) && !isNaN(limit) ? "?" : "") + 
     (timePosted ? "owner="+timePosted : "") +
     (!isNaN(offset) && !isNaN(limit) ? (timePosted ? "&" : "") +
     "limit="+limit+"&offset="+offset : ""))
    .then((res) => res.json());
-=======
+*/
 export function getPrjs(page, selectedTags, userId){
     var catagories = selectedTags !== [] ? "&categories="+selectedTags.join("|") : "";
     return get("Prjs" +"?limit=16"+catagories+
         "&offset="+page*16+(userId ? "&owner="+userId : ""))
     .then((res) => res.json())
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
 }
 export function getPrj(id) {
    return get(`Prjs/${id}`)

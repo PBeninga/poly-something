@@ -40,7 +40,7 @@ class Main extends Component {
                      <Button bsStyle="primary" onClick={() => this.props.history.push("/signin")}>
                      Sign In/Register</Button>
                   </div>}*/}
-=======
+
             <div>
                <Navbar>
                   <Navbar.Brand href="/">
@@ -93,7 +93,6 @@ class Main extends Component {
                      }
                   </Navbar.Collapse>
                </Navbar>
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
             </div>
 
 

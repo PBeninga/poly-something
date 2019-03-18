@@ -69,7 +69,7 @@
     margin-left: auto;
     margin-right: auto;
     width: 50%;
-<<<<<<< HEAD
+/*
 }
 .listingTitle {
   background: rgb(0, 0, 0);
@@ -90,7 +90,7 @@
   left: 10px;
   position: absolute;
 }*/
-=======
+
   }
 .right{
     margin-right: 0;
@@ -98,4 +98,3 @@
 .hide{
     display:none;
 }
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c

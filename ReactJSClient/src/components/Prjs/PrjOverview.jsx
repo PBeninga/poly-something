@@ -9,7 +9,7 @@ import './PrjOverview.css';
 export default class PrjOverview extends Component {
    constructor(props) {
       super(props);
-<<<<<<< HEAD
+/*
       console.log(this.props);
       props.updatePrjs(null, 3, 0);
       
@@ -19,8 +19,8 @@ export default class PrjOverview extends Component {
          tags: ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing"],
          selectedTags: [],
          displayNum: 12, // number of elements to display per page
-         curPage: 1 // current page index
-=======
+         curPage: 1 // current page index*/
+
       console.log(this.props)
       this.state = {
          showModal: false,
@@ -28,7 +28,6 @@ export default class PrjOverview extends Component {
          tags : ["music", "art", "programming", "charity"],
          page: 0,
          selectedTags: []
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
       }
       props.updatePrjs(this.state.page, this.state.selectedTags);
       this.openModal = this.openModal.bind(this)
@@ -111,7 +110,7 @@ export default class PrjOverview extends Component {
       console.log(this.state)
 
       this.props.Prjs.forEach(prj => {
-<<<<<<< HEAD
+/*
          var shouldShow = true
          for(var x = 0; x < this.state.selectedTags.length; x++){
             shouldShow = this.state.selectedTags.includes(prj.category);
@@ -123,25 +122,19 @@ export default class PrjOverview extends Component {
                category={prj.category}
                showControls={prj.ownerId === this.props.Prss.id}
                onDelete={() => this.openConfirmation(prj)}
-               onEdit={() => this.callEditPrj(prj)} />);
-=======
+               onEdit={() => this.callEditPrj(prj)} />);*/
+
          prjItems.push(<PrjItem
             key={prj.id}
             prj={prj}
             showControls={prj.ownerId === this.props.Prss.id}
             onDelete={() => this.openConfirmation(prj)}
             onEdit={() => this.callEditPrj(prj)} />);
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
       });
 
       return (
          <section>
-<<<<<<< HEAD
-            <h1>{/*Prj Overview*/}</h1>
-
-=======
             <h1>Prj Overview</h1>
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
             <div className="grid-container">
                <div className="side-menu">
                <PrjMenu
@@ -157,12 +150,9 @@ export default class PrjOverview extends Component {
                      <Button onClick={() => this.pageChange(1)} className={this.props.Prjs.length < 16 ? "hide" : ""} variant="primary">Next Page</Button>
                </div>
              </div>
-<<<<<<< HEAD
-=======
-            <Button bsStyle="primary" onClick={this.openModal}>
+             <Button bsStyle="primary" onClick={this.openModal}>
                New Conversation
             </Button>
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
@@ -208,20 +198,18 @@ const PrjMenu = function (props) {
 }
 // A Prj list item
 const PrjItem = function (props) {
-<<<<<<< HEAD
+/*
    return (<Link to={"/PrjDetail/" + props.prj.id}>
          <div className="grid-item" >
-            <div className="listingCategory center">{props.prj.category}</div> 
-=======
+            <div className="listingCategory center">{props.prj.category}</div> */
    return (<div className="grid-item">
->>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
             <img className="img-responsive center" 
                src="https://www.popsci.com/g00/3_c-7x78x78x78.qpqtdj.dpn_/c-7NPSFQIFVT25x24iuuqtx3ax2fx2fx78x78x78.qpqtdj.dpnx2ftjuftx2fqpqtdj.dpnx2fgjmftx2ftuzmftx2f436_2y_x2fqvcmjdx2fit-3127-24-b-mbshf_x78fc.kqhx3fjuplx3dw65dCAP2x26gdx3d61x2c61x26j21d.nbslx3djnbhf_$/$/$/$/$/$/$/$"
                alt="logo"
                width="100"/>
             <div className="listingTitle center">{props.prj.title}</div> 
            </div>
-           </Link>)
+           //</Link>)
       // <ListGroupItem>
       //    <Row>
       //       <Col sm={4}><Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link></Col>
@@ -239,4 +227,4 @@ const PrjItem = function (props) {
       //          : ''}
       //    </Row>
       // </ListGroupItem>
-}
+   )}
