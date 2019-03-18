@@ -5,7 +5,6 @@ import { Navbar, Nav, NavItem, ListGroup, ListGroupItem, Button } from 'react-bo
 import { LinkContainer } from 'react-router-bootstrap';
 import './Main.css';
 import ErrorModal from './ErrorModal'; 
-   
 class Main extends Component {
    
    signedIn() {

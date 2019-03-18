@@ -22,6 +22,9 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+.capped-height{
+  max-height: 100;
+}
 
 .titleImage {
   width: 512px;

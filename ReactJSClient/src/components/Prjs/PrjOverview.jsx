@@ -108,11 +108,11 @@ export default class PrjOverview extends Component {
 
       return (
          <section>
-            <h1>Prj Overview</h1>
             <div className="grid-container">
                <div className="side-menu"><PrjMenu handleFilter={(e) => this.handleFilter(e)}
                                                    checked={this.state.selectedTags} 
-                                                   tags={this.state.tags}/></div>
+                                                   tags={this.state.tags}
+                                                   signedIn = {Object.keys(this.props.Prss).length !== 0}/></div>
                <div className="grid-content inner-grid-container">
                   {prjItems}
                </div> 
@@ -156,9 +156,9 @@ const PrjMenu = function (props) {
       type="checkbox" /> {props.tags[i]}</Row></div>)
    }
    return (<div>
-               <div className="catHeader">Filter by category</div>
+               <div className="catHeader small-text">Filter by category</div>
                <div>{tags}</div>
-               <Link to={"/PrjDetail"}>
+               <Link to={props.signedIn ? "/PrjDetail" : "/signin"}>
                <Button bsStyle="primary" className="toDetailBtn" bsSize="small">
                   Upload a New Project
                </Button>
@@ -168,7 +168,8 @@ const PrjMenu = function (props) {
 // A Prj list item
 const PrjItem = function (props) {
    return (<div className="grid-item">
-            <img className="img-responsive center" 
+            <div className={props.prj.category+"-text"}>{props.prj.category}</div>
+            <img className="img-responsive center capped-height" 
                src={props.prj.thumbnail}
                alt="logo"
                width="100"/>
