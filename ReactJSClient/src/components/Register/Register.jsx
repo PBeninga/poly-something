@@ -80,7 +80,7 @@ class Register extends Component {
               <FieldGroup id="handle" type="text" label="Handle"
                placeholder="Enter user handle" value={this.state.handle}
                onChange={this.handleChange}
-               className = {this.state["firstNameBLUE"] ? "highlighted" : ""}
+               className = {this.state["handleBLUE"] ? "highlighted" : ""}
                />
               
               <FieldGroup id="email" type="email" label="Email Address"

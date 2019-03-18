@@ -51,10 +51,18 @@ export function register(data, cb) {
    };
 }
 
+<<<<<<< HEAD
 export function updatePrjs(timePosted, limit, offset, cb) {
    return (dispatch, prevState) => {
       api.getPrjs(timePosted, limit, offset)
       .then((prjs) => {console.log("here: "+JSON.stringify(prjs)); return dispatch({ type: 'UPDATE_PRJS', prjs })})
+=======
+export function updatePrjs(page, selectedTags, userId, cb) {
+   return (dispatch, prevState) => {
+      console.log(page)
+      api.getPrjs(page, selectedTags, userId)
+      .then((prjs) => {console.log("PROJECTS: "+JSON.stringify(prjs)); return dispatch({ type: 'UPDATE_PRJS', prjs })})
+>>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
       .then(() => {if (cb) cb();})
       .catch(error => dispatch({type: 'LOGIN_ERR', details: error}));
    };

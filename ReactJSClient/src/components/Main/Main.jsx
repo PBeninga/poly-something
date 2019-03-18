@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React,  { Component } from 'react';
 import { Register, SignIn, PrjOverview, PrjDetail, ConfDialog } from '../index'
 import { Route, Redirect, Switch, Link } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem, Button } from 'react-bootstrap';
@@ -26,6 +26,7 @@ class Main extends Component {
       return (
 
          <div>
+{/*<<<<<<< HEAD
             <div className="container header">
                   <img src={require("../../images/PolySomethingTitleBtn.png")}
                       className="titleImage"
@@ -38,7 +39,61 @@ class Main extends Component {
                      <div className="pull-right signBtn">
                      <Button bsStyle="primary" onClick={() => this.props.history.push("/signin")}>
                      Sign In/Register</Button>
-                     </div>}
+                  </div>}*/}
+=======
+            <div>
+               <Navbar>
+                  <Navbar.Brand href="/">
+                     <LinkContainer key={0} to="/">
+                        <img width="125" className="img-responsive" src = "/logo.png" alt="logo"/>
+                     </LinkContainer>
+                  </Navbar.Brand>
+                  <Navbar.Toggle />
+                  {this.signedIn() ?
+                     <Navbar.Text key={1}>
+                        {`Logged in as: ${this.props.Prss.firstName}
+                         ${this.props.Prss.lastName}`}
+                     </Navbar.Text>
+                     :
+                     ''
+                  }
+                  <Navbar.Collapse>
+                     <Nav>
+                        {this.signedIn() ?
+                           [
+                              <LinkContainer key={"all"} to="/allPrjs">
+                                 <NavItem>All Projects</NavItem>
+                              </LinkContainer>,
+                              <LinkContainer key={"my"} to="/myPrjs">
+                                 <NavItem>My Projects</NavItem>
+                              </LinkContainer>
+                           ]
+                           :
+                           [  
+                              <LinkContainer key={0} to="/signin">
+                                 <NavItem>Sign In</NavItem>
+                              </LinkContainer>,
+                              <LinkContainer key={1} to="/register">
+                                 <NavItem>
+                                    Register
+                               </NavItem>
+                              </LinkContainer>,
+                           ]
+                        }
+                     </Nav>
+                     {this.signedIn() ?
+                        <Nav pullRight>
+                           <NavItem eventKey={1}
+                            onClick={() => this.props.signOut()}>
+                              Sign out
+                           </NavItem>
+                        </Nav>
+                        :
+                        ''
+                     }
+                  </Navbar.Collapse>
+               </Navbar>
+>>>>>>> dd75c61a10c80bd9d71569142c829f06b9655e9c
             </div>
 
 
