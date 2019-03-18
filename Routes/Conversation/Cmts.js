@@ -16,7 +16,7 @@ router.get('/:prjId', function(req, res) {
       whenMade = req.query.dateTime
    }
 
-   var query = 'select c.whenMade, email, c.content, c.id from Project prj' +
+   var query = 'select c.whenMade, handle, c.content, c.id from Project prj' +
                ' join Comment c on c.prjId = prj.id join Person p on prsId ='+ 
                ' p.id where prj.id = ? ' +
                'and c.whenMade <= ? order by c.whenMade desc, c.id desc';

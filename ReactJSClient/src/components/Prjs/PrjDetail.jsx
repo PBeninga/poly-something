@@ -43,6 +43,10 @@ export default class PrjDetail extends Component {
       this.setState(newState);
    }
 
+   signedIn() {
+      return Object.keys(this.props.Prss).length !== 0; // Nonempty Prss obj
+   }
+
    modalDismiss = (result, prj) => {
       console.log(result)
       if (result.status === "Ok") {
@@ -150,7 +154,7 @@ export default class PrjDetail extends Component {
                       onError={() => this.setState({thumbnailError: true})} />
                      {this.state.editing ?
                      <div>
-                        <span className="project-detail">Thmbnail:</span>
+                        <span className="project-detail">Thumbnail URL:</span>
                      </div>
                      : ''}
                      {this.createEditField("thumbnail", '')}
@@ -207,12 +211,13 @@ export default class PrjDetail extends Component {
             <div>
                <hr/>
                <ButtonGroup className="button-group">
-                  <Button bsStyle="primary" onClick={() =>
-                   this.toggleLike(prj)}>
-                     {`${this.props.Liks.length ? "Unlike" :
+                  <Button bsStyle="primary" onClick={this.signedIn() ? () =>
+                   this.toggleLike(prj) : () => this.props.history.push("/signin")}>
+                     {`${this.props.Liks.length && this.signedIn() ? "Unlike" :
                       "Like"} (${prj.numLikes})`}
                   </Button>
-                  <Button bsStyle="primary" onClick={this.openModal}>
+                  <Button bsStyle="primary" onClick={this.signedIn() ? this.openModal :
+                  () => {this.props.history.push("/signin")}}>
                      Leave a Comment
                   </Button>
                </ButtonGroup>
@@ -221,7 +226,7 @@ export default class PrjDetail extends Component {
                </ListGroup>
                <CmtModal
                   showModal={this.state.showModal}
-                  title={"New Message"}
+                  title={"New Comment"}
                   prjId={prj.id}
                   onDismiss={(result) => this.modalDismiss(result, prj)} />
             </div>}
@@ -235,7 +240,7 @@ const PrjItem = function (props) {
    return (
       <ListGroupItem>
          <Row>
-            <Col sm={4}>{props.cmt.email}</Col>
+            <Col sm={4}>{props.cmt.handle}</Col>
             <Col sm={4}>{props.cmt.whenMade ? new Intl.DateTimeFormat('us',
                {
                   year: "numeric", month: "short", day: "numeric",

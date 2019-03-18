@@ -59,7 +59,7 @@ export default class CmtModal extends Component {
                         onChange={this.handleChange}
                      />
                      <FormControl.Feedback />
-                     <HelpBlock>Comment Cannot be can not be empty.</HelpBlock>
+                     <HelpBlock>Comment cannot be empty.</HelpBlock>
                   </FormGroup>
                </form>
             </Modal.Body>

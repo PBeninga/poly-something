@@ -1,9 +1,6 @@
 import React, { Component } from 'react';
 import { Form, FormGroup, Col, FormControl, Button, ControlLabel} from 'react-bootstrap';
-<<<<<<< HEAD
-=======
 import { Link } from 'react-router-dom';
->>>>>>> 40b1c8d20ceb99d4b35962725d2b908a89c3f81d
 import './SignIn.css';
 
 class SignIn extends Component {

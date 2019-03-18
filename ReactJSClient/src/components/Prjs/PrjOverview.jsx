@@ -97,7 +97,8 @@ export default class PrjOverview extends Component {
       var prjItems = [];
       console.log(this.state)
 
-      this.props.Prjs.forEach(prj => {
+      this.props.Prjs.forEach((prj, index) => {
+         if(index < 12)
          prjItems.push(<PrjItem
             key={prj.id}
             prj={prj}
@@ -109,18 +110,26 @@ export default class PrjOverview extends Component {
       return (
          <section>
             <div className="grid-container">
-               <div className="side-menu"><PrjMenu handleFilter={(e) => this.handleFilter(e)}
-                                                   checked={this.state.selectedTags} 
-                                                   tags={this.state.tags}
-                                                   signedIn = {Object.keys(this.props.Prss).length !== 0}/></div>
+               <div className="side-menu"><PrjMenu handleFilter={(e) => 
+                this.handleFilter(e)} checked={this.state.selectedTags} 
+                tags={this.state.tags}
+                signedIn = {Object.keys(this.props.Prss).length !== 0}/>
+               </div>
                <div className="grid-content inner-grid-container">
                   {prjItems}
                </div> 
                <div className="grid-footer">
-                     <Button variant="primary" className={this.state.page === 0 ? "hide" : ""} onClick={() => this.pageChange(-1)}>Previous Page</Button>
-                     <Button onClick={() => this.pageChange(1)} className={this.props.Prjs.length < 16 ? "hide" : ""} variant="primary">Next Page</Button>
+                  <Button bsStyle="primary" className={this.state.page === 0 ?
+                   "hide" : ""} onClick={() => this.pageChange(-1)}>
+                     Previous Page
+                  </Button>
+                  <Button onClick={() => this.pageChange(1)} className=
+                   {this.props.Prjs.length === 13 ? "" : "hide"}
+                   bsStyle="primary">
+                     Next Page
+                  </Button>
                </div>
-             </div>
+            </div>
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
@@ -167,28 +176,17 @@ const PrjMenu = function (props) {
 }
 // A Prj list item
 const PrjItem = function (props) {
+   var srcImg = new Image();
+
+   srcImg.src = props.prj.thumbnail;
+   if(!srcImg.width)
+      srcImg.src = 'logo.png';
+
    return (<div className="grid-item">
             <div className={props.prj.category+"-text"}>{props.prj.category}</div>
             <img className="img-responsive center capped-height" 
-               src={props.prj.thumbnail}
-               alt="logo"/>
-            <Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link> 
+               src={srcImg.src}
+               alt={"Image Not Available"}/>
+            <Link to={"/PrjDetail/" + props.prj.id} className="titleText">{props.prj.title}</Link> 
            </div>)
-      // <ListGroupItem>
-      //    <Row>
-      //       <Col sm={4}><Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link></Col>
-      //       <Col sm={4}>{props.prj.lastMessage ? new Intl.DateTimeFormat('us',
-      //          {
-      //             year: "numeric", month: "short", day: "numeric",
-      //             hour: "2-digit", minute: "2-digit", second: "2-digit"
-      //          })
-      //          .format(props.prj.lastMessage) : "N/A"}</Col>
-      //       {props.showControls ?
-      //          <div className="pull-right">
-      //             <Button bsSize="small" onClick={props.onDelete}><Glyphicon glyph="trash" /></Button>
-      //             <Button bsSize="small" onClick={props.onEdit}><Glyphicon glyph="edit" /></Button>
-      //          </div>
-      //          : ''}
-      //    </Row>
-      // </ListGroupItem>
 }
