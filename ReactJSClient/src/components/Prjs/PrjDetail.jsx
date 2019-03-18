@@ -74,7 +74,7 @@ export default class PrjDetail extends Component {
             contributors,
             category,
             content,
-            thumbnail: thumbnail || "none"
+            thumbnail: thumbnail || '/Project.png'
          };
 
          if (prj.id) {
