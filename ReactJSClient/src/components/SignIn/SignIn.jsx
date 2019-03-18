@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
-import { Form, FormGroup, Col, FormControl, Button, ControlLabel } from 'react-bootstrap';
+import { Form, FormGroup, Col, FormControl, Button, ControlLabel} from 'react-bootstrap';
+import { Link } from 'react-router-dom';
 import './SignIn.css';
 
 class SignIn extends Component {
@@ -20,7 +21,7 @@ class SignIn extends Component {
 
    // Call redux actionCreator signin via props.
    signIn(event) {
-      this.props.signIn(this.state, () => this.props.history.push("/allPrjs"));
+      this.props.signIn(this.state, () => this.props.history.push("/"));
       event.preventDefault()
    }
 
@@ -41,6 +42,7 @@ class SignIn extends Component {
    render() {
       console.log("Rendering Signin");
       return (
+         <div>
          <section className="container">
             <Col smOffset={2}>
                <h1>Sign in</h1>
@@ -85,6 +87,12 @@ class SignIn extends Component {
                </FormGroup>
             </Form>
          </section>
+         <div className="container toReg">
+         <Link to="/register">
+            Don't have an account? Click Here to Register
+         </Link>
+         </div>
+         </div>
       )
    }
 }

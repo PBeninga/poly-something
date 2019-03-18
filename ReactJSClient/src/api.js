@@ -138,8 +138,9 @@ export function postCmt(prjId, msg){
  * @returns {Promise} json parsed data
  */
 export function getPrjs(page, selectedTags, userId){
+    var limit = 12;
     var catagories = selectedTags !== [] ? "&categories="+selectedTags.join("|") : "";
-    return get("Prjs" +"?limit=16"+catagories+
+    return get("Prjs" +"?limit="+limit+catagories+
         "&offset="+page*16+(userId ? "&owner="+userId : ""))
     .then((res) => res.json())
 }

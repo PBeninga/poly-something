@@ -13,7 +13,7 @@ export default class PrjOverview extends Component {
       this.state = {
          showModal: false,
          showConfirmation: false,
-         tags : ["music", "art", "programming", "charity"],
+         tags : ["Art", "Community", "Miscellaneous", "Music", "Programming", "Writing"],
          page: 0,
          selectedTags: []
       }
@@ -121,9 +121,6 @@ export default class PrjOverview extends Component {
                      <Button onClick={() => this.pageChange(1)} className={this.props.Prjs.length < 16 ? "hide" : ""} variant="primary">Next Page</Button>
                </div>
              </div>
-            <Button bsStyle="primary" onClick={this.openModal}>
-               New Conversation
-            </Button>
             {/* Modal for creating and change prj */}
             <PrjModal
                showModal={this.state.showModal}
@@ -152,18 +149,27 @@ const PrjMenu = function (props) {
    var tags = [];
    for(var i = 0; i < props.tags.length; i++){
       tags.push(<div className="text-attrs" key={i}><Row><input
+
       name= {props.tags[i]}
       checked={props.checked.includes(props.tags[i])}
       onChange={props.handleFilter}
       type="checkbox" /> {props.tags[i]}</Row></div>)
    }
-   return (<div>{tags}</div>)
+   return (<div>
+               <div className="catHeader">Filter by category</div>
+               <div>{tags}</div>
+               <Link to={"/PrjDetail"}>
+               <Button bsStyle="primary" className="toDetailBtn" bsSize="small">
+                  Upload a New Project
+               </Button>
+               </Link>
+            </div>)
 }
 // A Prj list item
 const PrjItem = function (props) {
    return (<div className="grid-item">
             <img className="img-responsive center" 
-               src="https://www.popsci.com/g00/3_c-7x78x78x78.qpqtdj.dpn_/c-7NPSFQIFVT25x24iuuqtx3ax2fx2fx78x78x78.qpqtdj.dpnx2ftjuftx2fqpqtdj.dpnx2fgjmftx2ftuzmftx2f436_2y_x2fqvcmjdx2fit-3127-24-b-mbshf_x78fc.kqhx3fjuplx3dw65dCAP2x26gdx3d61x2c61x26j21d.nbslx3djnbhf_$/$/$/$/$/$/$/$"
+               src={props.prj.thumbnail}
                alt="logo"
                width="100"/>
             <Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link> 
