@@ -137,11 +137,12 @@ export function postCmt(prjId, msg){
 /**
  * @returns {Promise} json parsed data
  */
-export function getPrjs(userId) {
-   return get("Prjs" + (userId ? "?owner="+userId : ""))
-   .then((res) => res.json());
+export function getPrjs(page, selectedTags, userId){
+    var catagories = selectedTags !== [] ? "&categories="+selectedTags.join("|") : "";
+    return get("Prjs" +"?limit=16"+catagories+
+        "&offset="+page*16+(userId ? "&owner="+userId : ""))
+    .then((res) => res.json())
 }
-
 export function getPrj(id) {
    return get(`Prjs/${id}`)
    .then(rsp => rsp.json());
@@ -153,8 +154,7 @@ export function putPrj(id, body) {
 }
 
 export function postPrj(body) {
-   return post('Prjs', body).then(rsp => {
-      console.log(rsp)
+    return post('Prjs', body).then(rsp => {
       let location = rsp.headers.get("Location").split('/');
       return get(`Prjs/${location[location.length-1]}`);
    })

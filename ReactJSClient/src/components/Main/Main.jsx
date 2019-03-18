@@ -1,4 +1,4 @@
-import React, { Component } from 'react';
+import React,  { Component } from 'react';
 import { Register, SignIn, PrjOverview, PrjDetail, ConfDialog } from '../index'
 import { Route, Redirect, Switch } from 'react-router-dom';
 import { Navbar, Nav, NavItem, ListGroup, ListGroupItem } from 'react-bootstrap';
@@ -33,6 +33,11 @@ class Main extends Component {
          <div>
             <div>
                <Navbar>
+                  <Navbar.Brand href="/">
+                     <LinkContainer key={0} to="/">
+                        <img width="125" className="img-responsive" src = "/logo.png" alt="logo"/>
+                     </LinkContainer>
+                  </Navbar.Brand>
                   <Navbar.Toggle />
                   {this.signedIn() ?
                      <Navbar.Text key={1}>
@@ -54,7 +59,7 @@ class Main extends Component {
                               </LinkContainer>
                            ]
                            :
-                           [
+                           [  
                               <LinkContainer key={0} to="/signin">
                                  <NavItem>Sign In</NavItem>
                               </LinkContainer>,
