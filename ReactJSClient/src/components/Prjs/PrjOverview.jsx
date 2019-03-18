@@ -171,8 +171,7 @@ const PrjItem = function (props) {
             <div className={props.prj.category+"-text"}>{props.prj.category}</div>
             <img className="img-responsive center capped-height" 
                src={props.prj.thumbnail}
-               alt="logo"
-               width="100"/>
+               alt="logo"/>
             <Link to={"/PrjDetail/" + props.prj.id}>{props.prj.title}</Link> 
            </div>)
       // <ListGroupItem>
