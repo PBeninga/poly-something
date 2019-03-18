@@ -31,7 +31,7 @@ export default class PrjDetail extends Component {
          showConfirmation: false,
          editing: !projectExists,
          thumbnailError: false,
-         defaultThumbnail: require('../../images/Project.png')
+         defaultThumbnail: '/Project.png'
       }
 
       this.openModal = this.openModal.bind(this);
